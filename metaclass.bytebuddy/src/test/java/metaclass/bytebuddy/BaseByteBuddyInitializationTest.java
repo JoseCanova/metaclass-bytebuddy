@@ -9,6 +9,8 @@ import org.nanotek.metaclass.bytebuddy.MetaByteBuddy;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy;
 
 public class BaseByteBuddyInitializationTest {
 
@@ -19,12 +21,17 @@ public class BaseByteBuddyInitializationTest {
 	@Test
 	void testBaseByteBuddyInitialization() {
 		MetaClass<?,?> mc = new MetaClass<>();
-		mc.setClassName("ClassName");
+		mc.setClassName("org.nanotek.ClassName");
 		MetaByteBuddy mb = new MetaByteBuddy() {};
 		ByteBuddy buddy = mb.generateByteBuddy();
 		Builder<?> builder = mb.generateBuilderWithClassName(buddy, mc);
-		Class<?> clazz = builder.make().load(getClass().getClassLoader()).getLoaded();
+		Class<?> clazz = builder.make()
+				.load(getClass().getClassLoader(),
+						ClassLoadingStrategy.Default.INJECTION.with(PackageDefinitionStrategy.Trivial.INSTANCE))
+				.getLoaded();
 		assertNotNull(clazz);
-		assertTrue(clazz.getName().equals("ClassName"));
+		assertTrue(clazz.getSimpleName().equals("ClassName"));
+		System.out.println("package name " + clazz.getPackage().getName());
+		System.out.println("clazz name " + clazz.getSimpleName());
 	}
 }
