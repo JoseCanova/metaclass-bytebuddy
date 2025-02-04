@@ -7,6 +7,29 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.ClassFileVersion;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
+
+/**
+
+Overview:
+The MetaByteBuddy interface is designed to work with the Byte Buddy library for generating dynamic types. 
+It provides default methods for creating a ByteBuddy instance, 
+generating a builder for class construction, 
+and adding additional properties to the generated class. 
+The interface is generic, 
+using type parameters to work with subclasses of MetaClass and MetaClassAttribute.
+
+Key Abstractions:
+Generics:
+
+The interface uses two generic type parameters, T and A.
+
+T extends MetaClass<T, A>, ensuring that T is a subclass of MetaClass.
+
+A extends MetaClassAttribute<?>, representing the type of metadata attributes associated with the class.
+ * @param <T>
+ * @param <A>
+ */
+
 public interface MetaByteBuddy<T extends MetaClass<T,A>,A extends MetaClassAttribute<?>> {
 	
 	default ByteBuddy generateByteBuddy() {
