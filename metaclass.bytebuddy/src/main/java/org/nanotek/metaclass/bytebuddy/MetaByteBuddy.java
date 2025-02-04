@@ -36,7 +36,7 @@ public interface MetaByteBuddy<T extends MetaClass<T,A>,A extends MetaClassAttri
 		return new ByteBuddy(ClassFileVersion.JAVA_V22);
 	}
 	
-	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy, MetaClass<T,A> metaclass){
+	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy, T metaclass){
 		String packageName = "org.nanotek.";
 		metaclass.getClassName();
 		return bytebuddy

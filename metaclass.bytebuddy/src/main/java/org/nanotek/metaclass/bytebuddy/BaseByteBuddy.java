@@ -5,18 +5,19 @@ import org.nanotek.meta.model.MetaClass;
 import org.nanotek.meta.model.MetaClassAttribute;
 
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.type.TypeDefinition;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
 public interface BaseByteBuddy <T extends MetaClass<T,A>,A extends MetaClassAttribute<?>> 
 extends MetaByteBuddy<T,A>{
 
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	default Builder<Base> generateBuilderWithClassName(ByteBuddy bytebuddy, MetaClass<T, A> metaclass) {
-			String packageName = "org.nanotek.";
+	default  Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy, T metaclass) {
 			metaclass.getClassName();
-			return bytebuddy.subclass(Base.class).name(packageName.concat(metaclass.getClassName()));
+			TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
+			return bytebuddy.subclass(td).name(metaclass.getClassName());
 		}
 	
 }
