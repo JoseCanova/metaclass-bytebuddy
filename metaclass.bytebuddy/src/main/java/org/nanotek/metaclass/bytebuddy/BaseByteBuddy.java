@@ -15,7 +15,6 @@ extends MetaByteBuddy<T,A>{
 	
 	@Override
 	default  Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy, T metaclass) {
-			metaclass.getClassName();
 			TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
 			return bytebuddy.subclass(td).name(metaclass.getClassName());
 		}
