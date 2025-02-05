@@ -24,8 +24,6 @@ public interface EntityBaseByteBuddy extends BaseByteBuddy<RdbmsMetaClass, Rdbms
 	@Override
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy,
 			RdbmsMetaClass metaclass) {
-		String className = metaclass.getClassName();
-		String tableName = metaclass.getTableName();
 		
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
 		return bytebuddy
