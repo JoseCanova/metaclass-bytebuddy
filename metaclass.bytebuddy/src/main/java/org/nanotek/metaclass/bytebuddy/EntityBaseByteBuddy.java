@@ -6,6 +6,8 @@ import org.nanotek.Base;
 import org.nanotek.meta.model.MetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.EntityAnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.TableAnnotationDescriptionFactory;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
@@ -29,73 +31,9 @@ public interface EntityBaseByteBuddy extends BaseByteBuddy<RdbmsMetaClass, Rdbms
 		return bytebuddy
 				.subclass(td)
 				.name(metaclass.getClassName())
-				.annotateType(new EntityImpl(className))
-				.annotateType(new TableImpl(tableName))
+				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass))
+				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass))
 				.withHashCodeEquals()
 				.withToString();
-	}
-	
-	
-	
-	
-	class TableImpl implements Table{
-
-		private String name;
-		
-		public TableImpl(String name2) {
-			this.name = name2;
-		}
-		
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return Table.class;
-		}
-
-		@Override
-		public String name() {
-			return name;
-		}
-
-		@Override
-		public String catalog() {
-			return "";
-		}
-
-		@Override
-		public String schema() {
-			return "";
-		}
-
-		@Override
-		public UniqueConstraint[] uniqueConstraints() {
-			return new UniqueConstraint[0];
-		}
-
-		@Override
-		public Index[] indexes() {
-			return new Index[0];
-		}
-		
-	}
-	
-	class EntityImpl implements Entity{
-
-		private String name;
-		
-		public EntityImpl(String name2) {
-			this.name = name2;
-		}
-		
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			// TODO Auto-generated method stub
-			return Entity.class;
-		}
-
-		@Override
-		public String name() {
-			return name;
-		}
-		
 	}
 }
