@@ -36,6 +36,8 @@ public interface EntityBaseByteBuddy extends BaseByteBuddy<RdbmsMetaClass, Rdbms
 	}
 	
 	
+	
+	
 	class TableImpl implements Table{
 
 		private String name;
