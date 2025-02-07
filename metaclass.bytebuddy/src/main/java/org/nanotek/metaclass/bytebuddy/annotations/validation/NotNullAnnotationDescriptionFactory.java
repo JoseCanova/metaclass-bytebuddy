@@ -20,7 +20,7 @@ implements AnnotationDescriptionFactory<NotNull,RdbmsMetaClassAttribute>{
 	
 	@Override
 	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return  Optional.of(buildAnnotationDescription(NotNull.class));
+		return Optional.empty();// Optional.of(buildAnnotationDescription(NotNull.class));
 	}
 
 }

@@ -21,7 +21,11 @@ public class ColumnAnnotationDescriptionFactory
 	
 	@Override
 	public Optional< AnnotationDescription > buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return Optional.of(buildAnnotationDescription(Column.class));
+		return Optional.of(ma)
+		.filter(a -> !ma.isPartOfId())
+		.map(a -> 
+				AnnotationDescription.Builder.ofType(Column.class)
+				.define("name", a.getColumnName()).build());
 	}
 
 }

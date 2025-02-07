@@ -20,7 +20,7 @@ implements AnnotationDescriptionFactory<NotEmpty,RdbmsMetaClassAttribute> {
 	
 	@Override
 	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return  Optional.of(buildAnnotationDescription(NotEmpty.class));
+		return Optional.empty();// Optional.of(buildAnnotationDescription(NotEmpty.class));
 	}
 
 }

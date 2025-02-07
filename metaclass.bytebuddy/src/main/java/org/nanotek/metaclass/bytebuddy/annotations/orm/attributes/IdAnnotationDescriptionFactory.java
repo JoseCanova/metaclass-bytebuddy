@@ -21,7 +21,11 @@ implements AnnotationDescriptionFactory<Id, RdbmsMetaClassAttribute> {
 
 	@Override
 	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return Optional.of(buildAnnotationDescription(Id.class));
+		
+		return Optional.of(ma)
+				.filter(a -> a.isPartOfId())
+				.map(a -> AnnotationDescription.Builder.ofType(Id.class).build());
+		
 	}
 
 }

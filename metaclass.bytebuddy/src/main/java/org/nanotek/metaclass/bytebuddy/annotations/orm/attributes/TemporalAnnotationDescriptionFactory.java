@@ -18,9 +18,19 @@ public class TemporalAnnotationDescriptionFactory
 		return new TemporalAnnotationDescriptionFactory();
 	}
 
+	private static String TIMESTAMP = "timestamp";
+	private static String DATE = "date";
+	
 	@Override
 	public Optional< AnnotationDescription >buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return Optional.of(buildAnnotationDescription(Temporal.class));
+		return Optional
+		.of(ma)
+		.filter(a -> isDateType(a))
+		.map(a -> AnnotationDescription.Builder.ofType(Temporal.class).build());
+	}
+
+	private Boolean isDateType(RdbmsMetaClassAttribute a) {
+		return a.getSqlType().toLowerCase().contains(DATE)||a.getSqlType().toLowerCase().contains(TIMESTAMP);
 	}
 
 }
