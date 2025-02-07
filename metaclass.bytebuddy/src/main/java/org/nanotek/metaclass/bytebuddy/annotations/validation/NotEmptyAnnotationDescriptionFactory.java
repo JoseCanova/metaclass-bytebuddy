@@ -11,9 +11,13 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 public class NotEmptyAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<NotEmpty,RdbmsMetaClassAttribute> {
 
-	public NotEmptyAnnotationDescriptionFactory() {
+	private NotEmptyAnnotationDescriptionFactory() {
 	}
 
+	public static NotEmptyAnnotationDescriptionFactory on() {
+		return new NotEmptyAnnotationDescriptionFactory();
+	}
+	
 	@Override
 	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
 		return  Optional.of(buildAnnotationDescription(NotEmpty.class));
