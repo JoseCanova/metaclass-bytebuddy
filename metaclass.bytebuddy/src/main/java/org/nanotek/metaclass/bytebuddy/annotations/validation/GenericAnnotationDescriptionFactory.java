@@ -1,6 +1,7 @@
 package org.nanotek.metaclass.bytebuddy.annotations.validation;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
@@ -15,7 +16,7 @@ implements AnnotationDescriptionFactory<T, K> {
 	
 	
 	@Override
-	public AnnotationDescription buildAnnotationDescription(K ma) {
+	public Optional<AnnotationDescription> buildAnnotationDescription(K ma) {
 		throw new RuntimeException("not for use");
 	}
 

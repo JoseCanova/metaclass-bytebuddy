@@ -1,8 +1,7 @@
 package org.nanotek.metaclass.bytebuddy.annotations;
 
 import java.lang.annotation.Annotation;
-
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
+import java.util.Optional;
 
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
@@ -13,5 +12,5 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 		return AnnotationDescription.Builder.ofType(annotationType).build();
 	}
 	
-	AnnotationDescription buildAnnotationDescription(K  ma);
+	Optional<AnnotationDescription> buildAnnotationDescription(K  ma);
 }

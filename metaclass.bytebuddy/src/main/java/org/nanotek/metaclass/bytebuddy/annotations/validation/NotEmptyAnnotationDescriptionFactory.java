@@ -1,5 +1,7 @@
 package org.nanotek.metaclass.bytebuddy.annotations.validation;
 
+import java.util.Optional;
+
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
@@ -13,8 +15,8 @@ implements AnnotationDescriptionFactory<NotEmpty,RdbmsMetaClassAttribute> {
 	}
 
 	@Override
-	public AnnotationDescription buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return buildAnnotationDescription(NotEmpty.class);
+	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
+		return  Optional.of(buildAnnotationDescription(NotEmpty.class));
 	}
 
 }

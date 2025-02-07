@@ -1,5 +1,7 @@
 package org.nanotek.metaclass.bytebuddy.annotations.validation;
 
+import java.util.Optional;
+
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
@@ -17,11 +19,13 @@ implements AnnotationDescriptionFactory<Size,RdbmsMetaClassAttribute>{
 	}
 	
 	@Override
-	public AnnotationDescription buildAnnotationDescription
+	public Optional< AnnotationDescription> buildAnnotationDescription
 		(RdbmsMetaClassAttribute  ma) {
 		String lenStr = ma.getLength();
 		Integer length = Integer.valueOf(lenStr);
-		return AnnotationDescription.Builder.ofType(Size.class).define("max", length) .build();
+		return 
+				Optional.of(
+					AnnotationDescription.Builder.ofType(Size.class).define("max", length) .build());
 	}
 
 }

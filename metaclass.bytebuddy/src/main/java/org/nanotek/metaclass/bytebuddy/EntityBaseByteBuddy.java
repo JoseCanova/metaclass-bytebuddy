@@ -1,18 +1,11 @@
 package org.nanotek.metaclass.bytebuddy;
 
-import java.lang.annotation.Annotation;
-
 import org.nanotek.Base;
-import org.nanotek.meta.model.MetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.EntityAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.TableAnnotationDescriptionFactory;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
@@ -29,8 +22,8 @@ public interface EntityBaseByteBuddy extends BaseByteBuddy<RdbmsMetaClass, Rdbms
 		return bytebuddy
 				.subclass(td)
 				.name(metaclass.getClassName())
-				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass))
-				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass))
+				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
+				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.withHashCodeEquals()
 				.withToString();
 	}

@@ -1,5 +1,7 @@
 package org.nanotek.metaclass.bytebuddy.annotations.validation;
 
+import java.util.Optional;
+
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
@@ -16,9 +18,11 @@ implements AnnotationDescriptionFactory<Email, RdbmsMetaClassAttribute> {
 		return new EmailAnnotationDescriptionFactory();
 	}
 
+	
+	
 	@Override
-	public AnnotationDescription buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
-		return buildAnnotationDescription(Email.class);
+	public Optional<AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
+		return Optional.ofNullable(ma).filter(att->att.getColumnName().toLowerCase().contains("email")).map(att ->buildAnnotationDescription(Email.class));
 	}
 	
 }
