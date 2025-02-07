@@ -20,7 +20,8 @@ implements AnnotationDescriptionFactory<Table,RdbmsMetaClass>{
 	
 	@Override
 	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClass ma) {
-		return  Optional.of(buildAnnotationDescription(Table.class));
+		return Optional.of(ma)
+		.map(c -> AnnotationDescription.Builder.ofType(Table.class).define("name", c.getTableName()).build());
 	}
 
 }

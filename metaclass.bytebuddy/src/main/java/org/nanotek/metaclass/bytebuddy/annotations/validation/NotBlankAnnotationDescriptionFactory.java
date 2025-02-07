@@ -27,7 +27,8 @@ implements AnnotationDescriptionFactory<NotBlank,RdbmsMetaClassAttribute> {
 				.filter(a -> isJavaAllowedType(a))
 				.filter(a -> isRequired(a))
 				.map(a -> AnnotationDescription
-						.Builder.ofType(NotBlank.class).define("value", Long.valueOf(a.getLength())).build());
+						.Builder.ofType(NotBlank.class)
+						.build());
 			}
 
 			private Boolean isRequired(RdbmsMetaClassAttribute a) {

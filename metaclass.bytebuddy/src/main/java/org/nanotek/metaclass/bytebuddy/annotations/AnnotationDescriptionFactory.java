@@ -29,6 +29,11 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 	
 	public static class AttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
 		
+		public static AttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute> on () 
+		{
+			return new AttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute>();
+		}
+		
 		public AnnotationDescription[] build(K k) {
 			var annotations = new ArrayList<AnnotationDescription>();
 			
