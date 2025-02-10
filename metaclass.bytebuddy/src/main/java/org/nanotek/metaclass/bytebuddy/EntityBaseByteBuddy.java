@@ -11,7 +11,8 @@ import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
-public interface EntityBaseByteBuddy extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
+public interface EntityBaseByteBuddy 
+extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 
 	//TODO:verify how to fit indexes structure for the TableAnnotation.
 	@Override
