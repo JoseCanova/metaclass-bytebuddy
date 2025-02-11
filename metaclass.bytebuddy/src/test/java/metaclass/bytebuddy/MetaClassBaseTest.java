@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
-public class JsonReader {
+public class MetaClassBaseTest {
     
 	
 	RdbmsMetaClass theClass ;
