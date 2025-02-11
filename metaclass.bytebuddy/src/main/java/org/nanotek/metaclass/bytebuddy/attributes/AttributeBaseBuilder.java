@@ -48,7 +48,9 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	
 	default Class<?> getJavaClass(String clazz) {
 		try { 
-			return Class.forName(clazz);
+			return  PropertyTypeChanger
+						.asBase()
+						.getTypeForType(Class.forName(clazz));
 		}catch(Exception ex) {
 			throw new RuntimeException(ex);
 		}
