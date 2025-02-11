@@ -22,7 +22,6 @@ public interface PropertyTypeChanger {
 		@Override
 		public Class<?> getTypeForType(Class clazz) {
 			return  Optional.ofNullable(classEntries.get(clazz))
-					.map(k -> classEntries.get(k))
 					.orElse(clazz);
 		}
 		
