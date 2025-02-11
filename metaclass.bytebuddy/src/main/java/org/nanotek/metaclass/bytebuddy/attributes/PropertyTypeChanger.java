@@ -14,9 +14,15 @@ public interface PropertyTypeChanger {
 		return new BasePropertyTypeChanger();
 	}
 	
+	
 	public static class BasePropertyTypeChanger implements PropertyTypeChanger{
 		
 		Map<Class<?> , Class<?>> classEntries = new HashMap<>();
+		
+		public BasePropertyTypeChanger (){
+			classEntries.put(java.sql.Date.class,java.util.Date.class);
+			classEntries.put(java.sql.Timestamp.class,java.util.Date.class);
+		}
 		
 		@SuppressWarnings("rawtypes")
 		@Override

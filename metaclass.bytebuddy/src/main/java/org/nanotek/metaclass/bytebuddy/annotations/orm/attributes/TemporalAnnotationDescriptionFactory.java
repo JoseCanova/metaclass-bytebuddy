@@ -6,7 +6,9 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
 import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.annotation.AnnotationDescription.Builder;
 
 public class TemporalAnnotationDescriptionFactory
 		implements AnnotationDescriptionFactory<Temporal, RdbmsMetaClassAttribute> {
@@ -26,7 +28,17 @@ public class TemporalAnnotationDescriptionFactory
 		return Optional
 		.of(ma)
 		.filter(a -> isDateType(a))
-		.map(a -> AnnotationDescription.Builder.ofType(Temporal.class).build());
+		.map(a -> AnnotationDescription.Builder.ofType(Temporal.class))
+		.map(a -> defineType(a , ma).build());
+	}
+
+	private Builder defineType(Builder a, RdbmsMetaClassAttribute ma) {
+		var type = getType(ma);
+		return a.define("value", type) ;
+	}
+
+	private TemporalType getType(RdbmsMetaClassAttribute ma) {
+		return ma.getSqlType().toLowerCase().contains(DATE)?TemporalType.DATE:TemporalType.TIMESTAMP;
 	}
 
 	private Boolean isDateType(RdbmsMetaClassAttribute a) {
