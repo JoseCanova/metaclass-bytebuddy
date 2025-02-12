@@ -31,12 +31,13 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		atts
 		.stream()
 		.forEach(att -> {
+			System.err.println(att.getColumnName());
 			AnnotationDescription[] descs = buildAnnotations(att);
 							Class<?> theJavaClass = getJavaClass(att.getClazz());
-							Builder<?> theBuilder = holder.get().orElseThrow();
-							holder.put(theBuilder
+							Builder<?> newBuilder = holder.get().orElseThrow()
 									.defineProperty(att.getFieldName(), theJavaClass)
-									.annotateType(descs));
+									.annotateField(descs);
+							holder.put(newBuilder);
 		});
 		
 		return (T)holder.get(). orElseThrow();
