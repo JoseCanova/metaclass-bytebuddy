@@ -31,7 +31,6 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		atts
 		.stream()
 		.forEach(att -> {
-			System.err.println(att.getColumnName());
 			AnnotationDescription[] descs = buildAnnotations(att);
 							Class<?> theJavaClass = getJavaClass(att.getClazz());
 							Builder<?> newBuilder = holder.get().orElseThrow()

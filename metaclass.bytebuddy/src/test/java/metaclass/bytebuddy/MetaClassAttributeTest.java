@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
+import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,11 +41,12 @@ public class MetaClassAttributeTest {
 		var loaded = baseByteBuddy
 			.getLoadedClassInDefaultClassLoader();
 		
-		System.out.println(loaded.getName());
-		Stream
-		.of(loaded.getDeclaredFields())
-		.forEach(f -> 
-				System.out.println(f.getName()));
+		List<RdbmsMetaClassAttribute> atts = theClass.getMetaAttributes();
+	/*
+	 * Swimming through the void, we hear the word
+		We lose ourselves, but we find it all
+	 */
+		assertTrue(loaded.getDeclaredFields().length == atts.size());
 		}
 
 }
