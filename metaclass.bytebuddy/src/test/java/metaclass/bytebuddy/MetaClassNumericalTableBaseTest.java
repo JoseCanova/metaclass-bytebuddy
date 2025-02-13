@@ -75,7 +75,6 @@ public class MetaClassNumericalTableBaseTest {
 		.of(anns)
 		.filter(ann -> ann.annotationType().equals(Column.class))
 		.count() ;
-		System.err.println(theCount);
 		return theCount > 0;
 	}
 
