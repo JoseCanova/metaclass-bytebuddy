@@ -1,7 +1,9 @@
 package metaclass.bytebuddy;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +17,10 @@ import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.persistence.Column;
+
+import jakarta.persistence.Column;
 
 public class MetaClassNumericalTableBaseTest {
     
@@ -50,10 +56,36 @@ public class MetaClassNumericalTableBaseTest {
 			List<FieldAttributePair> theList = dumpDeclaredFields(loaded , theClass);
 			assertTrue(loaded.getDeclaredFields().length == theList.size());
 			verifyNumericFields(theList);
+			verifyAttributeColumnAnnotation(theList);
+	}
+
+
+	private void verifyAttributeColumnAnnotation(List<FieldAttributePair> theList) {
+		theList
+		.stream()
+		.filter(pair -> !pair.attribute().isPartOfId())
+		.map(pair -> pair.field())
+		.map(field -> field.getAnnotations())
+		.forEach(anns -> assertTrue( containsColumnAnnotation(anns)));
+	}
+
+
+	private Boolean containsColumnAnnotation(Annotation[] anns) {
+		long theCount =  Stream
+		.of(anns)
+		.filter(ann -> ann.annotationType().equals(Column.class))
+		.count() ;
+		System.err.println(theCount);
+		return theCount > 0;
 	}
 
 
 	private void verifyNumericFields(List<FieldAttributePair> theList) {
+		theList
+		.stream()
+		.forEach(pair -> {
+			assertTrue(pair.attribute().getClazz().equals(pair.field().getType().getName()));
+		});
 	}
 
 
