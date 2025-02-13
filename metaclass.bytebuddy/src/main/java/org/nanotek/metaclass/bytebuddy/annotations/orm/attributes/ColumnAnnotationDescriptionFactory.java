@@ -43,7 +43,7 @@ public class ColumnAnnotationDescriptionFactory
 		StringNumericPair[] thePair =  !ma.getClazz().equals("java.math.BigDecimal") || "0".equals(ma.getLength())? 
 				new StringNumericPair[0]: 
 			new StringNumericPair[] {new StringNumericPair ("precision", Integer.valueOf(ma.getLength())),
-					new StringNumericPair ("precision", Integer.valueOf(ma.getScale()))};
+					new StringNumericPair ("scale", ma.getScale())};
 		return thePair;
 	}
 
