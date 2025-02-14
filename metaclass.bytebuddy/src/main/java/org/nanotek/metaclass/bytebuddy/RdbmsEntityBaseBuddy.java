@@ -1,6 +1,5 @@
 package org.nanotek.metaclass.bytebuddy;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
@@ -17,7 +16,7 @@ public class RdbmsEntityBaseBuddy
 implements EntityBaseByteBuddy {
 
 	private RdbmsMetaClass metaClass;
-
+	
 	private RdbmsEntityBaseBuddy(RdbmsMetaClass metaClass) {
 		this.metaClass = metaClass;
 	}
@@ -25,7 +24,12 @@ implements EntityBaseByteBuddy {
 	public static RdbmsEntityBaseBuddy instance(RdbmsMetaClass metaClass) {
 		return new RdbmsEntityBaseBuddy(metaClass);
 	}
+	
 	public Class<?> getLoadedClassInDefaultClassLoader(){
+			return getLoadedClassInDefaultClassLoader(getClass().getClassLoader());
+	}
+	
+	public Class<?> getLoadedClassInDefaultClassLoader(ClassLoader classLoader){
 		ByteBuddy buddy = this.generateByteBuddy() ;
 		
 		Builder<?> bd = this.generateBuilderWithClassName
@@ -37,7 +41,7 @@ implements EntityBaseByteBuddy {
 		
 			Class<?> loaded = 
 					Optional.of(builder)
-			.map(b -> b.make().load(getClass().getClassLoader())
+			.map(b -> b.make().load(classLoader)
 					.getLoaded()) .orElseThrow() ;
 			
 			return loaded;

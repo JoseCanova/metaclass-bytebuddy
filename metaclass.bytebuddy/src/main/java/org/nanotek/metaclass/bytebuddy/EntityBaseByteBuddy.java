@@ -14,6 +14,8 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 public interface EntityBaseByteBuddy 
 extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 
+	public static String basePackage = "org.nanotek.data";
+	
 	//TODO:verify how to fit indexes structure for the TableAnnotation.
 	@Override
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy,
@@ -22,7 +24,7 @@ extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
 		return bytebuddy
 				.subclass(td)
-				.name(metaclass.getClassName())
+				.name(basePackage + "." + metaclass.getClassName())
 				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.withHashCodeEquals()
