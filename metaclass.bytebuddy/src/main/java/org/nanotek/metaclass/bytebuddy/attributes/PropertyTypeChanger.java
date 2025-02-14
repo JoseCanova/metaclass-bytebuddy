@@ -14,7 +14,7 @@ public interface PropertyTypeChanger {
 		return new BasePropertyTypeChanger();
 	}
 	
-	
+	//TODO: provide a converter solution for timestamp - datetime (java.time) attributes.
 	public static class BasePropertyTypeChanger implements PropertyTypeChanger{
 		
 		Map<Class<?> , Class<?>> classEntries = new HashMap<>();

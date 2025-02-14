@@ -25,14 +25,11 @@ implements EntityBaseByteBuddy {
 	public static RdbmsEntityBaseBuddy instance(RdbmsMetaClass metaClass) {
 		return new RdbmsEntityBaseBuddy(metaClass);
 	}
-	//TODO:refactor all
 	public Class<?> getLoadedClassInDefaultClassLoader(){
 		ByteBuddy buddy = this.generateByteBuddy() ;
 		
 		Builder<?> bd = this.generateBuilderWithClassName
 					(buddy, metaClass);
-		Holder<Builder<?>> holder = Holder.of(bd);
-
 		Builder<?> builder =   AttributeBaseBuilder
 				.on()
 				.generateClassAttributes(metaClass , 
