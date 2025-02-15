@@ -22,7 +22,7 @@ public class ColumnAnnotationDescriptionFactory
 	@Override
 	public Optional< AnnotationDescription > buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
 		
-		return ma.isPartOfId()? Optional.empty():
+		return 
 		 Optional.of(ma)
 		.map(a -> {
 				return AnnotationDescription.Builder.ofType(Column.class)
