@@ -23,7 +23,7 @@
            "columnName": "simple_numeric_key",
            "length": "10",
            "required": true,
-           "sqlType": "serial",
+           "sqlType": "int4",
            "attributes": null,
            "isPartOfIndex": true,
            "isGenerated": false,

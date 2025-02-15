@@ -23,9 +23,9 @@ implements AnnotationDescriptionFactory<Size,RdbmsMetaClassAttribute>{
 		(RdbmsMetaClassAttribute  ma) {
 		String lenStr = ma.getLength();
 		Integer length = Integer.valueOf(lenStr);
-		return 
-				Optional.of(
-					AnnotationDescription.Builder.ofType(Size.class).define("max", length) .build());
+		return Optional.empty();
+//				Optional.of(
+//					AnnotationDescription.Builder.ofType(Size.class).define("max", length) .build());
 	}
 
 }
