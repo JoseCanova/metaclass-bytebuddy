@@ -40,7 +40,7 @@ public class MetaClassBaseTest {
 	
 	//TODO: implement the class builder with attributes and validation.
 	@Test
-	void testClassBuilder() {
+	void testClassBuilder() throws ClassNotFoundException {
 	
 		EntityBaseByteBuddy eb = new EntityBaseByteBuddy() {};
 		Builder<?> builder =  eb.generateBuilderWithClassName
