@@ -11,11 +11,15 @@ import org.nanotek.metaclass.bytebuddy.attributes.PropertyTypeChanger;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.DynamicType.Unloaded;
 
 public class RdbmsEntityBaseBuddy 
 implements EntityBaseByteBuddy {
 
 	private RdbmsMetaClass metaClass;
+	private byte[] bytes;
+	
+	
 	
 	private RdbmsEntityBaseBuddy(RdbmsMetaClass metaClass) {
 		this.metaClass = metaClass;
@@ -39,12 +43,14 @@ implements EntityBaseByteBuddy {
 				.generateClassAttributes(metaClass , 
 				bd);
 		
-			Class<?> loaded = 
+			Unloaded<?> loaded = 
 					Optional.of(builder)
-			.map(b -> b.make().load(classLoader)
-					.getLoaded()) .orElseThrow() ;
+			.map(b -> b.make()) .orElseThrow() ;
 			
-			return loaded;
+			this.bytes = loaded.getBytes();
+			
+			return loaded.load(classLoader)
+					.getLoaded();
 	}
 	
 	public RdbmsMetaClass getMetaClass() {
@@ -63,5 +69,9 @@ implements EntityBaseByteBuddy {
 		}catch(Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	public byte[] getBytes() {
+		return bytes;
 	}
 }
