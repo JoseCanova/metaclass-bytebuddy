@@ -14,7 +14,7 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 public interface EntityBaseByteBuddy 
 extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 
-	public static String basePackage = "org.nanotek.data";
+	public static String basePackage = "org.nanotek.execution.config.spring.data";
 	
 	//TODO:verify how to fit indexes structure for the TableAnnotation.
 	@Override

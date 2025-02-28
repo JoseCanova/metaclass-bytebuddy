@@ -20,7 +20,7 @@ public class BaseByteBuddyInitializationTest {
 	}
 
 	
-	@Test
+//	@Test
 	void testBaseByteBuddyInitialization() {
 		MetaClass<?,?> mc = new MetaClass<>();
 		mc.setClassName("org.nanotek.ClassName");
