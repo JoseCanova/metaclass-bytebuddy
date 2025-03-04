@@ -12,6 +12,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
 public class RdbmsEntityBaseBuddy 
 implements EntityBaseByteBuddy {
@@ -49,7 +50,7 @@ implements EntityBaseByteBuddy {
 			
 			this.bytes = loaded.getBytes();
 			
-			return loaded.load(classLoader)
+			return loaded.load(getClass().getClassLoader(),ClassLoadingStrategy.Default.INJECTION)
 					.getLoaded();
 	}
 	
