@@ -9,7 +9,7 @@
         <log4j2.version>2.17.1</log4j2.version>
         <admin.version>2.6.7</admin.version>
         <querydsl.version>5.0.0</querydsl.version>
-        <buddy-version>1.17.1</buddy-version>
+        <buddy-version>1.17.2</buddy-version>
         <metaclass-version>0.0.1-SNAPSHOT</metaclass-version>
         <junit.version>5.11.4</junit.version>
     </properties>
@@ -17,6 +17,12 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
+            <version>${buddy-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-agent -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
             <version>${buddy-version}</version>
         </dependency>
        <!-- <dependency>

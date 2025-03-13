@@ -49,9 +49,26 @@ implements EntityBaseByteBuddy {
 			.map(b -> b.make()) .orElseThrow() ;
 			
 			this.bytes = loaded.getBytes();
-			
 			return loaded.load(getClass().getClassLoader(),ClassLoadingStrategy.Default.INJECTION)
 					.getLoaded();
+	}
+	
+	public Unloaded<?> getBytesForClassLoader(){
+		ByteBuddy buddy = this.generateByteBuddy() ;
+		
+		Builder<?> bd = this.generateBuilderWithClassName
+					(buddy, metaClass);
+		Builder<?> builder =   AttributeBaseBuilder
+				.on()
+				.generateClassAttributes(metaClass , 
+				bd);
+		
+			Unloaded<?> loaded = 
+					Optional.of(builder)
+			.map(b -> b.make()) .orElseThrow() ;
+			
+			this.bytes = loaded.getBytes();
+			return loaded;
 	}
 	
 	public RdbmsMetaClass getMetaClass() {
