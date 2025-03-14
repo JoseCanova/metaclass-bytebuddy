@@ -25,8 +25,10 @@ public class ColumnAnnotationDescriptionFactory
 		return 
 		 Optional.of(ma)
 		.map(a -> {
-				return AnnotationDescription.Builder.ofType(Column.class)
+			AnnotationDescription.Builder adb= AnnotationDescription.Builder.ofType(Column.class)
 				.define("name", a.getColumnName());
+			adb = adb.define("nullable", ma.isRequired()?false:true);
+			return adb;
 		})
 		.map(adb -> {
 			StringNumericPair[] 
