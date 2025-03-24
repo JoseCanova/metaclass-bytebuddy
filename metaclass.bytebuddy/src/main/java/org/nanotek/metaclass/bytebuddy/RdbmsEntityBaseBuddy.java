@@ -56,19 +56,19 @@ implements EntityBaseByteBuddy {
 	public Unloaded<?> getBytesForClassLoader(){
 		ByteBuddy buddy = this.generateByteBuddy() ;
 		
-		Builder<?> bd = this.generateBuilderWithClassName
-					(buddy, metaClass);
+		Builder<?> bd = this.generateBuilderWithClassName (buddy, metaClass);
+		
 		Builder<?> builder =   AttributeBaseBuilder
 				.on()
 				.generateClassAttributes(metaClass , 
 				bd);
 		
-			Unloaded<?> loaded = 
+			Unloaded<?> unloaded = 
 					Optional.of(builder)
 			.map(b -> b.make()) .orElseThrow() ;
 			
-			this.bytes = loaded.getBytes();
-			return loaded;
+			this.bytes = unloaded.getBytes();
+			return unloaded;
 	}
 	
 	public RdbmsMetaClass getMetaClass() {
