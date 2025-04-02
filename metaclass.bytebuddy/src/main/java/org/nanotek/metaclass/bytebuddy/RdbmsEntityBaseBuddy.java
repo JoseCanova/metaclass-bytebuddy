@@ -49,7 +49,7 @@ implements EntityBaseByteBuddy {
 			.map(b -> b.make()) .orElseThrow() ;
 			
 			this.bytes = loaded.getBytes();
-			return loaded.load(getClass().getClassLoader(),ClassLoadingStrategy.Default.INJECTION)
+			return loaded.load(classLoader,ClassLoadingStrategy.Default.INJECTION)
 					.getLoaded();
 	}
 	

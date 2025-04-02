@@ -24,7 +24,6 @@ public interface PropertyTypeChanger {
 			classEntries.put(java.sql.Timestamp.class,java.util.Date.class);
 		}
 		
-		@SuppressWarnings("rawtypes")
 		@Override
 		public Class<?> getTypeForType(Class clazz) {
 			return  Optional.ofNullable(classEntries.get(clazz))
