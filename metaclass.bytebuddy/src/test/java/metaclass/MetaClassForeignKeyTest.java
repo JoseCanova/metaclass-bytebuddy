@@ -11,7 +11,6 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MetaClassForeignKeyTest {
@@ -32,7 +31,6 @@ public class MetaClassForeignKeyTest {
 				        	.stream()
 				        	.map(theNode -> objectMapper.convertValue(theNode,RdbmsMetaClass.class))
 				        	.collect(Collectors.toList());
-        	
     }
 	
 	@Test
@@ -42,17 +40,19 @@ public class MetaClassForeignKeyTest {
 		.stream()
 		.filter(theClass -> theClass.getRdbmsForeignKeys().size() == 1)
 		.forEach(theClass -> {
-						var baseByteBuddy = RdbmsEntityBaseBuddy
-											.instance(theClass);
-						var loaded = baseByteBuddy
-										.getLoadedClassInDefaultClassLoader();
-						
-						List<RdbmsMetaClassAttribute> atts = theClass.getMetaAttributes();
-						/*
-						 * Swimming through the void, we hear the word
-							We lose ourselves, but we find it all
-						 */
-						assertTrue(loaded.getDeclaredFields().length == atts.size());
+								var baseByteBuddy = RdbmsEntityBaseBuddy
+													.instance(theClass);
+								var loaded = baseByteBuddy
+												.getLoadedClassInDefaultClassLoader();
+								
+								List<RdbmsMetaClassAttribute> atts = 
+												theClass.getMetaAttributes();
+								/*
+								 * Swimming through the void, we hear the word
+									We lose ourselves, but we find it all
+								 */
+								assertTrue(loaded.getDeclaredFields().length == atts.size());
+			
 		});
 	}
 
