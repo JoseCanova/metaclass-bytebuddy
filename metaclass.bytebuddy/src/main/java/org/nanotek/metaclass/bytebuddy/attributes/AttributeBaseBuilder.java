@@ -3,12 +3,17 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 import java.util.List;
 
+import org.nanotek.meta.model.MetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
+import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
+import org.nanotek.metaclass.BuilderMetaClass;
+import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.bytebuddy.Holder;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
 
@@ -29,6 +34,7 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		List<RdbmsMetaClassAttribute> atts = metaClass.getMetaAttributes();
 		atts
 		.stream()
+		.filter(att -> att.isPartOfForeignKey()==false)
 		.forEach(att -> {
 			AnnotationDescription[] descs = buildAnnotations(att);
 							Class<?> theJavaClass = getJavaClass(att.getClazz());
@@ -41,9 +47,70 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		return (T)holder.get(). orElseThrow();
 	}
 	
+	default T generateForeignKeyClassAttributes(M metaClass, T builder,
+			BuilderMetaClassRegistry buildermetaclassregistry) {
+		
+		Holder<Builder<?>> holder = Holder.of(builder);
+
+		List<RdbmsMetaClassAttribute> atts = metaClass.getMetaAttributes();
+		atts
+		.stream()
+		.filter(att -> att.isPartOfForeignKey())
+		.forEach(att -> {
+			RdbmsMetaClassForeignKey fk = getForeignKey(att,metaClass.getRdbmsForeignKeys());
+			BuilderMetaClass bmc = buildermetaclassregistry.getBuilderMetaClass(fk.getTableName());
+			TypeDescription td = bmc.builder().toTypeDescription();
+			
+			RdbmsMetaClassAttribute parentAttribute = 
+							findMetaClassAttributeByColumnName(bmc.metaClass(),fk.getColumnName());
+			
+			Builder<?> mutableBuilder = holder
+				.get()
+				.map(bd -> {
+					AnnotationDescription[] descs =  buildRelationShipAnnotations(att,
+							metaClass,
+							buildermetaclassregistry);
+					return bd
+							.defineProperty(parentAttribute.getFieldName(), td)
+							.annotateField(descs);
+				}).get();
+			
+			holder.put(mutableBuilder);
+		});
+		
+		return (T)holder.get(). orElseThrow();
+	};
+	
+	default RdbmsMetaClassAttribute findMetaClassAttributeByColumnName(RdbmsMetaClass metaClass, String columnName) {
+	return 	metaClass
+		.getMetaAttributes()
+		.stream()
+		.filter(att -> att.getColumnName().equals(columnName))
+		.findFirst().orElseThrow();
+	}
+
+
+	default RdbmsMetaClassForeignKey getForeignKey(RdbmsMetaClassAttribute att,
+			List<RdbmsMetaClassForeignKey> rdbmsForeignKeys) {
+		
+		return rdbmsForeignKeys
+		.stream()
+		.filter(fk -> att.getColumnName().equals(fk.getJoinColumnName()))
+		.findFirst().get();
+	}
+
+
 	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] buildAnnotations(K att) {
 		return new AnnotationDescriptionFactory.AttributeAnnotationDescriptionBuilder<K>().build(att);
 	}
+	
+	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] 
+			buildRelationShipAnnotations(K att,
+					RdbmsMetaClass metaClass,
+					BuilderMetaClassRegistry buildermetaclassregistry) {
+		return new AnnotationDescriptionFactory.ForeignAttributeAnnotationDescriptionBuilder<K>().build(att,metaClass,buildermetaclassregistry);
+	}
+	
 	
 	default Class<?> getJavaClass(String clazz) {
 		try { 
@@ -54,4 +121,7 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 			throw new RuntimeException(ex);
 		}
 	}
+
+
+
 }

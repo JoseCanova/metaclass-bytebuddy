@@ -4,7 +4,11 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.nanotek.meta.model.rdbms.RdbmsIndex;
+import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
+import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
+import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.ColumnAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.IdAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.TemporalAnnotationDescriptionFactory;
@@ -16,6 +20,9 @@ import org.nanotek.metaclass.bytebuddy.annotations.validation.NotEmptyAnnotation
 import org.nanotek.metaclass.bytebuddy.annotations.validation.NotNullAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.SizeAnnotationDescriptionFactory;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 public interface AnnotationDescriptionFactory<T extends Annotation , K> {
@@ -25,7 +32,14 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 		return AnnotationDescription.Builder.ofType(annotationType).build();
 	}
 	
-	Optional<AnnotationDescription> buildAnnotationDescription(K  ma);
+	default Optional<AnnotationDescription> buildAnnotationDescription(K ma) {
+		return Optional.empty();
+	}
+	
+	default Optional<AnnotationDescription> buildForeignAnnotationDescription
+			(RdbmsMetaClassAttribute ma, RdbmsMetaClass metaClass,BuilderMetaClassRegistry builderMetaClassRegistry) {
+		return Optional.empty();
+	}
 	
 	public static class AttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
 		
@@ -59,6 +73,59 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 			.ifPresent(a -> annotations.add(a));
 			return annotations.toArray(new AnnotationDescription[annotations.size()]);
 		}
-		
 	}
+	
+	public static class ForeignAttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
+		
+		public static ForeignAttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute> on () 
+		{
+			return new ForeignAttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute>();
+		}
+		public AnnotationDescription[] build(K fk,RdbmsMetaClass fkRdbmsMetaClass,BuilderMetaClassRegistry builderMetaClassRegistr) {
+			
+			var annotations = new ArrayList<AnnotationDescription>();
+			
+			RdbmsMetaClassForeignKey foreignKey = findForeignKey(fk,fkRdbmsMetaClass);
+			
+			//TODO: will use the index to choose annotation type Many-One or One-One
+			Optional<RdbmsIndex> index = findRdbmsIndex(fk, fkRdbmsMetaClass);
+			
+			//TODO: move this to the proper factory
+			if(index.isPresent()) {
+				AnnotationDescription adoo = AnnotationDescription.Builder.ofType(OneToOne.class).build();
+				annotations.add(adoo);
+			}else {
+				AnnotationDescription admo = AnnotationDescription.Builder.ofType(ManyToOne.class).build();
+				annotations.add(admo);
+			}
+			AnnotationDescription joinAnnotation = AnnotationDescription.Builder
+														.ofType(JoinColumn.class)
+														.define("name", foreignKey.getJoinColumnName())
+														.define("referencedColumnName",foreignKey.getColumnName())
+														.build();
+														
+			annotations.add(joinAnnotation);
+			return annotations.toArray(new AnnotationDescription[annotations.size()]);
+		}
+		
+		private Optional<RdbmsIndex> findRdbmsIndex(K fk, RdbmsMetaClass fkRdbmsMetaClass) {
+			return fkRdbmsMetaClass
+					.getRdbmsIndexes()
+					.stream()
+					.filter(index -> findColumnInIndex(index, fk))
+					.filter(index -> index.getIsUnique())
+					.filter(index -> index.getColumnNames().size()==1)
+					.findFirst();
+		}
+		private Boolean findColumnInIndex(RdbmsIndex index, K fk) {
+			return index.getColumnNames().stream().filter(c -> c.equalsIgnoreCase(fk.getColumnName())).count()>0;
+		}
+		private RdbmsMetaClassForeignKey findForeignKey(K k, RdbmsMetaClass fkRdbmsMetaClass) {
+			return fkRdbmsMetaClass
+					.getRdbmsForeignKeys()
+					.stream()
+					.filter(fk -> fk.getJoinColumnName().equals(k.getColumnName())).findFirst().get();
+		}
+	}
+	
 }

@@ -2,7 +2,9 @@ package org.nanotek.metaclass.bytebuddy.annotations.orm.relation;
 
 import java.util.Optional;
 
+import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
+import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
 import jakarta.persistence.OneToMany;
@@ -17,7 +19,8 @@ implements AnnotationDescriptionFactory<OneToMany,RdbmsMetaClassAttribute>{
 	}
 
 	@Override
-	public Optional<AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
+	public Optional<AnnotationDescription> buildForeignAnnotationDescription(RdbmsMetaClassAttribute ma,
+			RdbmsMetaClass metaClass, BuilderMetaClassRegistry builderMetaClassRegistry) {
 		return Optional.empty();
 	}
 

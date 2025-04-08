@@ -19,7 +19,6 @@ implements AnnotationDescriptionFactory<Email, RdbmsMetaClassAttribute> {
 	}
 
 	
-	
 	@Override
 	public Optional<AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
 		return Optional.ofNullable(ma).filter(att->att.getColumnName().toLowerCase().contains("email")).map(att ->buildAnnotationDescription(Email.class));

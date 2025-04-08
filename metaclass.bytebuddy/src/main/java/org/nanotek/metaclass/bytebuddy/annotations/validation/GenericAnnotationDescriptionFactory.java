@@ -15,7 +15,6 @@ implements AnnotationDescriptionFactory<T, K> {
 
 	
 	
-	@Override
 	public Optional<AnnotationDescription> buildAnnotationDescription(K ma) {
 		throw new RuntimeException("not for use");
 	}

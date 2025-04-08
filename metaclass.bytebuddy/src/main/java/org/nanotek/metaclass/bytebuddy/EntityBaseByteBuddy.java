@@ -16,7 +16,7 @@ extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 
 	public static String basePackage = "org.nanotek.config.spring.data.";
 	
-	//TODO:verify how to fit indexes structure for the TableAnnotation.
+	//TODO: change the scope of this method to public static
 	@Override
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy,
 			RdbmsMetaClass metaclass) {
