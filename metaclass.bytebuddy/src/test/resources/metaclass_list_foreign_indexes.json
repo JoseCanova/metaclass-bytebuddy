@@ -1,0 +1,149 @@
+[
+  {
+    "identity": {
+      "id": null,
+      "definition": "",
+      "shortName": "person.person_pkey",
+      "name": "person_pkey",
+      "columns": [
+        {
+          "id": null,
+          "name": "person_key"
+        }
+      ]
+    },
+    "metaAttributes": [
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": true,
+        "name": "personKey",
+        "isId": true,
+        "clazz": "java.lang.String",
+        "columnName": "person_key",
+        "length": "50",
+        "required": true,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": true,
+        "isGenerated": false,
+        "isPartOfForeignKey": false,
+        "scale": 0
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "personName",
+        "isId": false,
+        "clazz": "java.lang.String",
+        "columnName": "person_name",
+        "length": "200",
+        "required": true,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": false,
+        "scale": 0
+      }
+    ],
+    "rdbmsForeignKeys": [],
+    "rdbmsIndexes": [
+      {
+        "fullName": "public.person.person_pkey",
+        "columnNames": [
+          "person_key"
+        ]
+      }
+    ],
+    "hasPrimaryKey": true,
+    "className": "Person",
+    "tableName": "person"
+  },
+  {
+    "identity": {
+      "id": null,
+      "definition": "",
+      "shortName": "pet.pet_pkey",
+      "name": "pet_pkey",
+      "columns": [
+        {
+          "id": null,
+          "name": "pet_key"
+        }
+      ]
+    },
+    "metaAttributes": [
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": true,
+        "name": "petKey",
+        "isId": true,
+        "clazz": "java.lang.String",
+        "columnName": "pet_key",
+        "length": "25",
+        "required": true,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": true,
+        "isGenerated": false,
+        "isPartOfForeignKey": false,
+        "scale": 0
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "petName",
+        "isId": false,
+        "clazz": "java.lang.String",
+        "columnName": "pet_name",
+        "length": "250",
+        "required": true,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": false,
+        "scale": 0
+      },
+      {
+        "id": null,
+        "idAliases": null,
+        "partOfId": false,
+        "name": "petPersonKey",
+        "isId": false,
+        "clazz": "java.lang.String",
+        "columnName": "pet_person_key",
+        "length": "50",
+        "required": true,
+        "sqlType": "varchar",
+        "attributes": null,
+        "isPartOfIndex": false,
+        "isGenerated": false,
+        "isPartOfForeignKey": true,
+        "scale": 0
+      }
+    ],
+    "rdbmsForeignKeys": [
+      {
+        "tableName": "person",
+        "columnName": "person_key",
+        "joinColumnName": "pet_person_key"
+      }
+    ],
+    "rdbmsIndexes": [
+      {
+        "fullName": "public.pet.pet_pkey",
+        "columnNames": [
+          "pet_key"
+        ]
+      }
+    ],
+    "hasPrimaryKey": true,
+    "className": "Pet",
+    "tableName": "pet"
+  }
+]
