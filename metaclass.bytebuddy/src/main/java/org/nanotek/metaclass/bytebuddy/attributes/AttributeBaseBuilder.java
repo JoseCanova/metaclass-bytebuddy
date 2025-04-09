@@ -95,7 +95,8 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 												T builder,
 												BuilderMetaClassRegistry buildermetaclassregistry,
 												ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
-		
+		//TODO: refactor this method generating the correct parameters for onetoman
+		//need to first locate if the "target class" which will be added the collection is valid 
 		processedForeignKeyRegistry
 					.getProcessedForeignKeys()
 					.stream()
