@@ -13,6 +13,7 @@ import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+//TODO: give some realp purpose for this test
 public class MetaClassForeignKeyTest {
 
 	

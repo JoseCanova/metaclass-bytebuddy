@@ -13,7 +13,7 @@ import java.util.Optional;
  * metamodel is properly configured.
  * Since the builder is "mutable class" 
  * once a BuilderMetaClass is recovered from the 
- * registry it is also removed from it.
+ * registry it is also must be removed  from it; if it`s being used(which means being mutated).
  * 
  */
 
