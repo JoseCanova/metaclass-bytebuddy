@@ -9,6 +9,7 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 import org.nanotek.metaclass.BuilderMetaClassRegistry;
+import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.ColumnAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.IdAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.TemporalAnnotationDescriptionFactory;
@@ -36,9 +37,22 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 		return Optional.empty();
 	}
 	
+	/**
+	 * @deprecated
+	 * @param ma
+	 * @param metaClass
+	 * @param builderMetaClassRegistry
+	 * @return
+	 */
 	default Optional<AnnotationDescription> buildForeignAnnotationDescription
 			(RdbmsMetaClassAttribute ma, RdbmsMetaClass metaClass,BuilderMetaClassRegistry builderMetaClassRegistry) {
-		return Optional.empty();
+		throw new RuntimeException("This method is deprecated since the processes fk registry was added");
+	}
+	
+	default Optional<AnnotationDescription> buildForeignAnnotationDescription
+			(RdbmsMetaClassAttribute ma, RdbmsMetaClass metaClass,BuilderMetaClassRegistry builderMetaClassRegistry,
+			ProcessedForeignKeyRegistry processedForeignKeyRegistry) {	
+			return Optional.empty();
 	}
 	
 	public static class AttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
@@ -81,7 +95,10 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 		{
 			return new ForeignAttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute>();
 		}
-		public AnnotationDescription[] build(K fk,RdbmsMetaClass fkRdbmsMetaClass,BuilderMetaClassRegistry builderMetaClassRegistr) {
+		public AnnotationDescription[] build(K fk,
+													RdbmsMetaClass fkRdbmsMetaClass,
+													BuilderMetaClassRegistry builderMetaClassRegistr,
+													ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
 			
 			var annotations = new ArrayList<AnnotationDescription>();
 			
@@ -105,6 +122,7 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 														.build();
 														
 			annotations.add(joinAnnotation);
+			processedForeignKeyRegistry.registryForeignKeyMetaClass(foreignKey, fkRdbmsMetaClass);
 			return annotations.toArray(new AnnotationDescription[annotations.size()]);
 		}
 		

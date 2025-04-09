@@ -2,17 +2,25 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
-import org.nanotek.meta.model.MetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 import org.nanotek.metaclass.BuilderMetaClass;
 import org.nanotek.metaclass.BuilderMetaClassRegistry;
+import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.Holder;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.description.annotation.AnnotationValue;
+import net.bytebuddy.description.enumeration.EnumerationDescription;
+import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
@@ -48,7 +56,8 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	}
 	
 	default T generateForeignKeyClassAttributes(M metaClass, T builder,
-			BuilderMetaClassRegistry buildermetaclassregistry) {
+			BuilderMetaClassRegistry buildermetaclassregistry,
+			ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
 		
 		Holder<Builder<?>> holder = Holder.of(builder);
 
@@ -62,14 +71,15 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 			TypeDescription td = bmc.builder().toTypeDescription();
 			
 			RdbmsMetaClassAttribute parentAttribute = 
-							findMetaClassAttributeByColumnName(bmc.metaClass(),fk.getColumnName());
+									findMetaClassAttributeByColumnName(bmc.metaClass(),fk.getColumnName());
 			
 			Builder<?> mutableBuilder = holder
 				.get()
 				.map(bd -> {
 					AnnotationDescription[] descs =  buildRelationShipAnnotations(att,
 							metaClass,
-							buildermetaclassregistry);
+							buildermetaclassregistry,
+							processedForeignKeyRegistry);
 					return bd
 							.defineProperty(parentAttribute.getFieldName(), td)
 							.annotateField(descs);
@@ -80,6 +90,46 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		
 		return (T)holder.get(). orElseThrow();
 	};
+	
+	default T generateCollectionsClassAttributes(M metaClass, 
+												T builder,
+												BuilderMetaClassRegistry buildermetaclassregistry,
+												ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
+		
+		processedForeignKeyRegistry
+					.getProcessedForeignKeys()
+					.stream()
+					.map(fk ->  Map.entry(fk, buildermetaclassregistry.getBuilderMetaClass(fk.getTableName())))
+					.forEach(entry ->{
+										RdbmsMetaClassForeignKey fk = entry.getKey();
+										BuilderMetaClass fkbmc = buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
+										
+										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
+									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
+									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
+										AnnotationDescription oneToManyAnnotationDescription = AnnotationDescription
+												.Builder.ofType(OneToMany.class)
+												.define("cascade", av )
+												.define("mappedBy", entry.getKey().getJoinColumnName() ).build();
+										
+										TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
+										TypeDefinition tdClazz = entry.getValue().builder().toTypeDescription();
+										TypeDescription.Generic genericTypeDef = TypeDescription.Generic
+																			.Builder
+																			.parameterizedType(setTypeDescription  ,tdClazz).build();
+										Builder<?> theResultantBuilder = builder
+										.defineProperty( entry.getValue().metaClass().getClassName().toLowerCase() , genericTypeDef)
+										.annotateField(new AnnotationDescription[] {oneToManyAnnotationDescription});
+										
+										BuilderMetaClass bmc = new BuilderMetaClass(theResultantBuilder,metaClass);
+										buildermetaclassregistry.registryBuilderMetaClass(metaClass.getTableName(), bmc);
+										
+					});
+		
+		
+		
+		return null;
+	}
 	
 	default RdbmsMetaClassAttribute findMetaClassAttributeByColumnName(RdbmsMetaClass metaClass, String columnName) {
 	return 	metaClass
@@ -107,8 +157,10 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] 
 			buildRelationShipAnnotations(K att,
 					RdbmsMetaClass metaClass,
-					BuilderMetaClassRegistry buildermetaclassregistry) {
-		return new AnnotationDescriptionFactory.ForeignAttributeAnnotationDescriptionBuilder<K>().build(att,metaClass,buildermetaclassregistry);
+					BuilderMetaClassRegistry buildermetaclassregistry,
+					ProcessedForeignKeyRegistry processedForeignKeyRegistry
+					) {
+		return new AnnotationDescriptionFactory.ForeignAttributeAnnotationDescriptionBuilder<K>().build(att,metaClass,buildermetaclassregistry,processedForeignKeyRegistry);
 	}
 	
 	
