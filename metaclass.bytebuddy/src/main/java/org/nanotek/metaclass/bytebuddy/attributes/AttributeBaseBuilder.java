@@ -2,9 +2,6 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
@@ -91,19 +88,21 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		return (T)holder.get(). orElseThrow();
 	};
 	
-	default T generateCollectionsClassAttributes(M metaClass, 
-												T builder,
+	default void generateCollectionsClassAttributes(RdbmsMetaClassForeignKey fk,
 												BuilderMetaClassRegistry buildermetaclassregistry,
 												ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
 		//TODO: refactor this method generating the correct parameters for onetoman
 		//need to first locate if the "target class" which will be added the collection is valid 
-		processedForeignKeyRegistry
-					.getProcessedForeignKeys()
-					.stream()
-					.map(fk ->  Map.entry(fk, buildermetaclassregistry.getBuilderMetaClass(fk.getTableName())))
-					.forEach(entry ->{
-										RdbmsMetaClassForeignKey fk = entry.getKey();
-										BuilderMetaClass fkbmc = buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
+		
+		BuilderMetaClass oneBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getTableName());
+		RdbmsMetaClass oneMetaClass = oneBuilderMetaClass.metaClass();
+		Builder<?> oneBuilder = oneBuilderMetaClass.builder();
+		//default one attribute for primary key using primary key field name for Many Side
+		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
+		BuilderMetaClass manyBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
+		RdbmsMetaClass manyMetaClass = manyBuilderMetaClass.metaClass();
+		Builder<?> manyBuilder = manyBuilderMetaClass.builder();
+		
 										
 										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
 									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
@@ -111,27 +110,31 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 										AnnotationDescription oneToManyAnnotationDescription = AnnotationDescription
 												.Builder.ofType(OneToMany.class)
 												.define("cascade", av )
-												.define("mappedBy", entry.getKey().getJoinColumnName() ).build();
+												.define("mappedBy", mappedByAttribute.getFieldName() ).build();
 										
 										TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
-										TypeDefinition tdClazz = entry.getValue().builder().toTypeDescription();
+										//Here the type definition is relative to the foreign key class (the holder of the fk attribute)
+										TypeDefinition tdClazz = manyBuilder.toTypeDescription();
 										TypeDescription.Generic genericTypeDef = TypeDescription.Generic
 																			.Builder
 																			.parameterizedType(setTypeDescription  ,tdClazz).build();
-										Builder<?> theResultantBuilder = builder
-										.defineProperty( entry.getValue().metaClass().getClassName().toLowerCase() , genericTypeDef)
+										Builder<?> oneResultantBuilder = oneBuilder
+										.defineProperty( manyMetaClass.getClassName().toLowerCase() , genericTypeDef)
 										.annotateField(new AnnotationDescription[] {oneToManyAnnotationDescription});
 										
-										BuilderMetaClass bmc = new BuilderMetaClass(theResultantBuilder,metaClass);
-										buildermetaclassregistry.registryBuilderMetaClass(metaClass.getTableName(), bmc);
-										
-					});
+										BuilderMetaClass bmc = new BuilderMetaClass(oneResultantBuilder,oneMetaClass);
+										buildermetaclassregistry.registryBuilderMetaClass(oneMetaClass.getTableName(), bmc);
 		
-		
-		
-		return null;
 	}
 	
+	default RdbmsMetaClassAttribute findIdAttribute(RdbmsMetaClass metaClass) {
+		return metaClass
+			.getMetaAttributes()
+			.stream()
+			.filter(att -> att.isPartOfId()).findFirst().orElseThrow();
+	}
+
+
 	default RdbmsMetaClassAttribute findMetaClassAttributeByColumnName(RdbmsMetaClass metaClass, String columnName) {
 	return 	metaClass
 		.getMetaAttributes()
