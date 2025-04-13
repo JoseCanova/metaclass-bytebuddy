@@ -2,10 +2,12 @@ package metaclass.bytebuddy;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
@@ -38,9 +40,38 @@ public class MetaClassBaseTest {
     }
 	
 	
-	//TODO: implement the class builder with attributes and validation.
+	void testTestClassBuilder() throws ClassNotFoundException {
+		testClassBuilder(); 
+	}
+	
 	@Test
-	void testClassBuilder() throws ClassNotFoundException {
+	void testLookupMethodHandle() throws Exception{
+		Class<?> theClass = testClassBuilder();
+		MethodHandles.Lookup lookup = MethodHandles.lookup();
+		MethodHandles.Lookup plookup = MethodHandles.privateLookupIn(theClass,lookup);
+		Stream
+		.of(theClass.getDeclaredFields())
+		.forEach(f -> {
+			System.out.println(f.getName());
+			try {
+				Object instance = Instancio.create(theClass);
+				MethodHandle mh = plookup.findGetter(theClass, f.getName() , f.getType());
+				Object result = mh.invoke(instance);
+				System.err.println(result);
+				MethodHandle mhs = plookup.findSetter(theClass, f.getName() , f.getType());
+				Object finstance = Instancio.create(f.getType());
+				System.err.println("finstance" + finstance);
+				mhs.invoke(instance,finstance);	
+				Object fresult = mh.invoke(instance);
+				System.err.println(fresult);
+			} catch (Throwable e) {
+				throw new RuntimeException(e);
+			}
+		});
+		
+	}
+	
+	Class<?> testClassBuilder() throws ClassNotFoundException {
 	
 		EntityBaseByteBuddy eb = new EntityBaseByteBuddy() {};
 		Builder<?> builder =  eb.generateBuilderWithClassName
@@ -64,6 +95,7 @@ public class MetaClassBaseTest {
 		Stream
 		.of(loaded.getDeclaredFields())
 		.forEach(f -> System.out.println(f.getName()));
+		return loaded;
 	}
 
 
