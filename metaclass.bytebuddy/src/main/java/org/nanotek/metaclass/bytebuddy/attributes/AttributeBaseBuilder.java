@@ -14,6 +14,7 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationValue;
 import net.bytebuddy.description.enumeration.EnumerationDescription;
@@ -88,9 +89,59 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		return (T)holder.get(). orElseThrow();
 	};
 	
-	default void generateCollectionsClassAttributes(RdbmsMetaClassForeignKey fk,
-												BuilderMetaClassRegistry buildermetaclassregistry,
-												ProcessedForeignKeyRegistry processedForeignKeyRegistry) {
+	default void generateParentRelationAttribute(RdbmsMetaClassForeignKey fk,
+			BuilderMetaClassRegistry buildermetaclassregistry) {
+		
+		String fkTableName = fk.getJoinTableName();
+		RdbmsMetaClass fkMetaClass = buildermetaclassregistry.getBuilderMetaClass(fkTableName).metaClass();
+		if(verifyUniqueIndex(fk,fkMetaClass)) {
+			generateParentRelationClassAttribute(fk,buildermetaclassregistry);
+		}else {
+			generateParentCollectionsClassAttribute(fk,buildermetaclassregistry);
+		}
+	}
+	
+	default Boolean verifyUniqueIndex(RdbmsMetaClassForeignKey fk, RdbmsMetaClass fkMetaClass) {
+		return fkMetaClass
+		.getRdbmsIndexes()
+		.stream()
+		.filter(index -> index.getColumnNames().contains(fk.getJoinColumnName()))
+		.filter(index -> index.getIsUnique())
+		.count()>0L;
+	}
+
+	default void generateParentRelationClassAttribute(RdbmsMetaClassForeignKey fk,
+			BuilderMetaClassRegistry buildermetaclassregistry) {
+		BuilderMetaClass oneBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getTableName());
+		RdbmsMetaClass oneMetaClass = oneBuilderMetaClass.metaClass();
+		Builder<?> oneBuilder = oneBuilderMetaClass.builder();
+		//default one attribute for primary key using primary key field name for Many Side
+		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
+		BuilderMetaClass childBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
+		RdbmsMetaClass childMetaClass = childBuilderMetaClass.metaClass();
+		Builder<?> childBuilder = childBuilderMetaClass.builder();
+		
+										
+										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
+									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
+									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
+										AnnotationDescription oneToOneAnnotationDescription = AnnotationDescription
+												.Builder.ofType(OneToOne.class)
+												.define("mappedBy", mappedByAttribute.getFieldName() ).build();
+										
+										//TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
+										//Here the type definition is relative to the foreign key class (the holder of the fk attribute)
+										TypeDefinition tdClazz = childBuilder.toTypeDescription();
+										Builder<?> oneResultantBuilder = oneBuilder
+										.defineProperty( childMetaClass.getClassName().toLowerCase() , tdClazz)
+										.annotateField(new AnnotationDescription[] {oneToOneAnnotationDescription});
+										
+										BuilderMetaClass bmc = new BuilderMetaClass(oneResultantBuilder,oneMetaClass);
+										buildermetaclassregistry.registryBuilderMetaClass(oneMetaClass.getTableName(), bmc);
+	}
+
+	default void generateParentCollectionsClassAttribute(RdbmsMetaClassForeignKey fk,
+													BuilderMetaClassRegistry buildermetaclassregistry) {
 		//TODO: refactor this method generating the correct parameters for onetoman
 		//need to first locate if the "target class" which will be added the collection is valid 
 		
@@ -104,13 +155,13 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		Builder<?> manyBuilder = manyBuilderMetaClass.builder();
 		
 										
-										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
-									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
-									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
+										TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
+									    EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
+									    var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
 										AnnotationDescription oneToManyAnnotationDescription = AnnotationDescription
 												.Builder.ofType(OneToMany.class)
 												.define("cascade", av )
-												.define("mappedBy", mappedByAttribute.getFieldName() ).build();
+												.define("mappedBy", mappedByAttribute.getFieldName()).build();
 										
 										TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
 										//Here the type definition is relative to the foreign key class (the holder of the fk attribute)

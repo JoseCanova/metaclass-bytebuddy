@@ -105,10 +105,10 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 			RdbmsMetaClassForeignKey foreignKey = findForeignKey(fk,fkRdbmsMetaClass);
 			
 			//TODO: will use the index to choose annotation type Many-One or One-One
-			Optional<RdbmsIndex> index = findRdbmsIndex(fk, fkRdbmsMetaClass);
+			Optional<RdbmsIndex> uniqueIndex = findUniqueRdbmsIndex(fk, fkRdbmsMetaClass);
 			
 			//TODO: move this to the proper factory
-			if(index.isPresent()) {
+			if(uniqueIndex.isPresent()) {
 				AnnotationDescription adoo = AnnotationDescription.Builder.ofType(OneToOne.class).build();
 				annotations.add(adoo);
 			}else {
@@ -126,7 +126,7 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 			return annotations.toArray(new AnnotationDescription[annotations.size()]);
 		}
 		
-		private Optional<RdbmsIndex> findRdbmsIndex(K fk, RdbmsMetaClass fkRdbmsMetaClass) {
+		private Optional<RdbmsIndex> findUniqueRdbmsIndex(K fk, RdbmsMetaClass fkRdbmsMetaClass) {
 			return fkRdbmsMetaClass
 					.getRdbmsIndexes()
 					.stream()

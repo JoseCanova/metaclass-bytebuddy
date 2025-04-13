@@ -43,7 +43,10 @@ implements EntityBaseByteBuddy {
 	public Builder<?> initializeInternalStatebuilder  (ByteBuddy bytebuddy,
 			RdbmsMetaClass metaclass){
 		
-		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
+		TypeDescription baseTd=   TypeDescription.ForLoadedType.of(Base.class);
+		
+		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(baseTd  ,baseTd).build();
+		
 		internalStatebuilder = bytebuddy
 				.subclass(td)
 				.name(basePackage.concat(metaclass.getClassName()))

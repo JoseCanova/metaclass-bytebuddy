@@ -18,7 +18,6 @@ public class ColumnAnnotationDescriptionFactory
 	public static ColumnAnnotationDescriptionFactory on() {
 		return new ColumnAnnotationDescriptionFactory();
 	}
-	
 	@Override
 	public Optional< AnnotationDescription > buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
 		
@@ -31,6 +30,9 @@ public class ColumnAnnotationDescriptionFactory
 			return adb;
 		})
 		.map(adb -> {
+			return isStringType(ma)?adb.define("length",Long.valueOf(ma.getLength())):adb;
+		})
+		.map(adb -> {
 			StringNumericPair[] 
 					precisionScaleParameters = mountPrecisionScaleBigDecimalParameter(ma);
 			return Stream
@@ -41,6 +43,10 @@ public class ColumnAnnotationDescriptionFactory
 			});
 	}
 	
+	private boolean isStringType(RdbmsMetaClassAttribute ma) {
+		return ma.getClazz().equals("java.land.String");
+	}
+
 	private StringNumericPair[] mountPrecisionScaleBigDecimalParameter(RdbmsMetaClassAttribute ma) {
 		StringNumericPair[] thePair =  !ma.getClazz().equals("java.math.BigDecimal") || "0".equals(ma.getLength())? 
 				new StringNumericPair[0]: 
