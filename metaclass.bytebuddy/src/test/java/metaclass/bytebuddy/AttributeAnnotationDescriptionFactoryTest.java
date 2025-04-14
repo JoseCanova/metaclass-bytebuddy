@@ -2,7 +2,6 @@ package metaclass.bytebuddy;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
+import metaclass.ClassFileSerializer;
+import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 public class AttributeAnnotationDescriptionFactoryTest {
@@ -33,6 +34,11 @@ public class AttributeAnnotationDescriptionFactoryTest {
 	        .build(attribute);
 	        
 	        assertTrue(as.length>0);
+	        ByteBuddy bb = new ByteBuddy();
+	        
+	        byte[] bytes = bb.makeAnnotation().annotateType(as[0]).make().getBytes();
+	        Class<?> cls = as[0].getClass();
+	        ClassFileSerializer.saveEntityFile(cls, bytes);
 	        
 	        List<AnnotationDescription> annotations = Arrays.asList(as);
 	        
