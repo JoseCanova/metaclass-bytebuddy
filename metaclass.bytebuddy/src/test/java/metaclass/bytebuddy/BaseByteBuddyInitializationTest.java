@@ -15,6 +15,7 @@ import jakarta.persistence.Column;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.field.FieldDescription;
+import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -61,8 +62,10 @@ public class BaseByteBuddyInitializationTest {
 		TypeDescription atb = bbuilder.toTypeDescription();
 		List<FieldDescription.InDefinedShape> theList = atb.getDeclaredFields();
 		theList.stream().forEach(is -> System.err.println(is.getDeclaredAnnotations() + is.toString()));
-		List<?> theMethods = atb.getDeclaredMethods();
-		theMethods.stream().forEach(is -> System.err.println(is));
+		List<MethodDescription.InDefinedShape> theMethods = atb.getDeclaredMethods();
+		theMethods.stream().forEach(mi -> {
+			System.err.println(mi.toString());
+		});
 		
 		Class<?> clazz = bbuilder.make()
 				.load(getClass().getClassLoader(),

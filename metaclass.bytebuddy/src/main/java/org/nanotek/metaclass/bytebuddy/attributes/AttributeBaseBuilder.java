@@ -2,6 +2,7 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
@@ -11,10 +12,11 @@ import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.Holder;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ForeignKeyMetaClassRecord;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToOneAnnotationDescrptionFactory;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationValue;
 import net.bytebuddy.description.enumeration.EnumerationDescription;
@@ -121,13 +123,16 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		RdbmsMetaClass childMetaClass = childBuilderMetaClass.metaClass();
 		Builder<?> childBuilder = childBuilderMetaClass.builder();
 		
-										
+										//TODO: move this to the proper annotation factory.
 										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
 									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
 									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
-										AnnotationDescription oneToOneAnnotationDescription = AnnotationDescription
-												.Builder.ofType(OneToOne.class)
-												.define("mappedBy", mappedByAttribute.getFieldName() ).build();
+										
+									     ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(Optional.of(fk), oneMetaClass);
+									     AnnotationDescription oneToOneAnnotationDescription = OneToOneAnnotationDescrptionFactory
+																					    		 .on()
+																					    		 .buildAnnotationDescription( theRecord).orElseThrow();
+
 										
 										//TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
 										//Here the type definition is relative to the foreign key class (the holder of the fk attribute)

@@ -13,6 +13,7 @@ import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.ColumnAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.IdAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.TemporalAnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.JoinColumnAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.EmailAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.MaxAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.MinAnnotationDescriptionFactory;
@@ -28,6 +29,9 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 
 public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 
+	default Optional<AnnotationDescription>  buildAnnotationDescription(){
+		return Optional.empty();
+	}
 	
 	default AnnotationDescription buildAnnotationDescription(Class<T> annotationType) {
 		return AnnotationDescription.Builder.ofType(annotationType).build();
@@ -107,21 +111,18 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 			//TODO: will use the index to choose annotation type Many-One or One-One
 			Optional<RdbmsIndex> uniqueIndex = findUniqueRdbmsIndex(fk, fkRdbmsMetaClass);
 			
-			//TODO: move this to the proper factory
-			if(uniqueIndex.isPresent()) {
+			uniqueIndex.ifPresentOrElse(index ->{
 				AnnotationDescription adoo = AnnotationDescription.Builder.ofType(OneToOne.class).build();
 				annotations.add(adoo);
-			}else {
+			},()->{
 				AnnotationDescription admo = AnnotationDescription.Builder.ofType(ManyToOne.class).build();
 				annotations.add(admo);
-			}
-			AnnotationDescription joinAnnotation = AnnotationDescription.Builder
-														.ofType(JoinColumn.class)
-														.define("name", foreignKey.getJoinColumnName())
-														.define("referencedColumnName",foreignKey.getColumnName())
-														.build();
-														
-			annotations.add(joinAnnotation);
+			});
+			
+			Optional<AnnotationDescription> joinAnnotationOpt = JoinColumnAnnotationDescriptionFactory.on().buildAnnotationDescription(foreignKey);
+			
+			joinAnnotationOpt.ifPresent(ant -> annotations.add(ant));
+			
 			processedForeignKeyRegistry.registryForeignKeyMetaClass(foreignKey, fkRdbmsMetaClass);
 			return annotations.toArray(new AnnotationDescription[annotations.size()]);
 		}
