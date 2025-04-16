@@ -42,6 +42,33 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 		return Optional.empty();
 	}
 	
+	default RelationType classifyRelationType(RdbmsMetaClassForeignKey foreignKey, RdbmsMetaClass rdbmsMetaClass) {
+		return rdbmsMetaClass
+		.getRdbmsForeignKeys()
+		.stream()
+		.filter(fk -> fk.equals(foreignKey))
+		.findFirst()
+		.map(fk -> RelationType.CHILD)
+		.orElse(RelationType.PARENT);
+	}
+	
+	default  RdbmsMetaClassAttribute findIdAttribute(RdbmsMetaClassForeignKey fk , RdbmsMetaClass metaClass) {
+		return metaClass
+				.getMetaAttributes()
+				.stream()
+				.filter(att -> att.getColumnName().equals(fk.getColumnName())).findFirst().orElseThrow();
+		}
+	
+	default AnnotationDescription mountParentAnnotation(ForeignKeyMetaClassRecord theRecord,Class<?>annotationClass) {
+	    return Optional.of(theRecord
+		.foreignKey())
+		.map(fk -> findIdAttribute(fk,theRecord.rdbmsMetaClass()))
+		.map(att -> {
+			return AnnotationDescription
+					.Builder.ofType(OneToOne.class)
+					.define("mappedBy", att.getFieldName()).build();
+		}).orElseThrow();
+	}
 	/**
 	 * @deprecated
 	 * @param ma

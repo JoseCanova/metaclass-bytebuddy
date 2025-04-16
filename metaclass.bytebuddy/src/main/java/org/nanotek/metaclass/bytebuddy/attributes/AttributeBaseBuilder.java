@@ -2,7 +2,6 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 
 import java.util.List;
-import java.util.Optional;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
@@ -13,6 +12,7 @@ import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.Holder;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ForeignKeyMetaClassRecord;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToManyAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToOneAnnotationDescrptionFactory;
 
 import jakarta.persistence.CascadeType;
@@ -163,10 +163,13 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 										TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
 									    EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
 									    var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
-										AnnotationDescription oneToManyAnnotationDescription = AnnotationDescription
-												.Builder.ofType(OneToMany.class)
-												.define("cascade", av )
-												.define("mappedBy", mappedByAttribute.getFieldName()).build();
+									    
+									    ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(fk, oneMetaClass,buildermetaclassregistry);
+									    
+										AnnotationDescription oneToManyAnnotationDescription = OneToManyAnnotationDescriptionFactory
+																								.on()
+																								.buildAnnotationDescription(theRecord)
+																								.orElseThrow();
 										
 										TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
 										//Here the type definition is relative to the foreign key class (the holder of the fk attribute)

@@ -2,10 +2,8 @@ package org.nanotek.metaclass.bytebuddy.annotations.orm.relation;
 
 import java.util.Optional;
 
-import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
-import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.RelationType;
 
 import jakarta.persistence.OneToMany;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -13,15 +11,33 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 
 //TODO: implement the Annotation Description using as base the sample created in the data-service.
 public class OneToManyAnnotationDescriptionFactory 
-implements AnnotationDescriptionFactory<OneToMany,RdbmsMetaClassAttribute>{
+implements AnnotationDescriptionFactory<OneToMany,ForeignKeyMetaClassRecord>{
 
-	public OneToManyAnnotationDescriptionFactory() {
+	private OneToManyAnnotationDescriptionFactory() {
+	}
+	
+	public static OneToManyAnnotationDescriptionFactory on() {
+		return new OneToManyAnnotationDescriptionFactory();
 	}
 
 	@Override
-	public Optional<AnnotationDescription> buildForeignAnnotationDescription(RdbmsMetaClassAttribute ma,
-			RdbmsMetaClass metaClass, BuilderMetaClassRegistry builderMetaClassRegistry) {
-		return Optional.empty();
+	public Optional<AnnotationDescription> buildAnnotationDescription(ForeignKeyMetaClassRecord theRecord) {
+		
+		AnnotationDescription ad = null;
+		
+		RelationType relationType = classifyRelationType(theRecord.foreignKey(),theRecord.rdbmsMetaClass());
+		
+		switch (relationType) {
+			case PARENT:
+				ad = mountParentAnnotation(theRecord,OneToMany.class);
+				break;
+			default:
+				throw new RuntimeException("not a valid one to many foreign key on metamodel");
+		}
+		
+		return Optional.of(ad);
 	}
+
+
 
 }
