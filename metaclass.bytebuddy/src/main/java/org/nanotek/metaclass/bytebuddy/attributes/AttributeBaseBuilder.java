@@ -128,7 +128,7 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
 									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
 										
-									     ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(Optional.of(fk), oneMetaClass);
+									     ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(fk, oneMetaClass,buildermetaclassregistry);
 									     AnnotationDescription oneToOneAnnotationDescription = OneToOneAnnotationDescrptionFactory
 																					    		 .on()
 																					    		 .buildAnnotationDescription( theRecord).orElseThrow();

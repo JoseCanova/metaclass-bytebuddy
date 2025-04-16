@@ -13,7 +13,9 @@ import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.ColumnAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.IdAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.attributes.TemporalAnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ForeignKeyMetaClassRecord;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.JoinColumnAnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToOneAnnotationDescrptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.EmailAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.MaxAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.MinAnnotationDescriptionFactory;
@@ -22,7 +24,6 @@ import org.nanotek.metaclass.bytebuddy.annotations.validation.NotEmptyAnnotation
 import org.nanotek.metaclass.bytebuddy.annotations.validation.NotNullAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.validation.SizeAnnotationDescriptionFactory;
 
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -112,16 +113,18 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 			Optional<RdbmsIndex> uniqueIndex = findUniqueRdbmsIndex(fk, fkRdbmsMetaClass);
 			
 			uniqueIndex.ifPresentOrElse(index ->{
-				AnnotationDescription adoo = AnnotationDescription.Builder.ofType(OneToOne.class).build();
-				annotations.add(adoo);
+				ForeignKeyMetaClassRecord fkbmc =new ForeignKeyMetaClassRecord(foreignKey,fkRdbmsMetaClass,builderMetaClassRegistr);
+				OneToOneAnnotationDescrptionFactory.on().buildAnnotationDescription(fkbmc)
+				.ifPresentOrElse(adoo -> annotations.add(adoo) , ()-> new RuntimeException("no annotation present"));
 			},()->{
 				AnnotationDescription admo = AnnotationDescription.Builder.ofType(ManyToOne.class).build();
 				annotations.add(admo);
 			});
 			
-			Optional<AnnotationDescription> joinAnnotationOpt = JoinColumnAnnotationDescriptionFactory.on().buildAnnotationDescription(foreignKey);
-			
-			joinAnnotationOpt.ifPresent(ant -> annotations.add(ant));
+			JoinColumnAnnotationDescriptionFactory
+							.on()
+							.buildAnnotationDescription(foreignKey)
+							.ifPresent(ant -> annotations.add(ant));
 			
 			processedForeignKeyRegistry.registryForeignKeyMetaClass(foreignKey, fkRdbmsMetaClass);
 			return annotations.toArray(new AnnotationDescription[annotations.size()]);
