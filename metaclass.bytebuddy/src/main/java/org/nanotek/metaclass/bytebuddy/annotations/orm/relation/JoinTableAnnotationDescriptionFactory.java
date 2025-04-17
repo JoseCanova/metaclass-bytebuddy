@@ -18,7 +18,7 @@ public class JoinTableAnnotationDescriptionFactory
 
 	private JoinTableAnnotationDescriptionFactory() {}
 	
-	public JoinTableAnnotationDescriptionFactory on() {
+	public static JoinTableAnnotationDescriptionFactory on() {
 		return new JoinTableAnnotationDescriptionFactory();
 	}
 	 @Override

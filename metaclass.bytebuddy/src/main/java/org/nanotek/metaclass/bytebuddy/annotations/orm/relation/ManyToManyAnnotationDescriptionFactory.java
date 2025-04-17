@@ -10,7 +10,11 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 public class ManyToManyAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<ManyToMany, ForeignKeyMetaClassRecord> {
 
-	public ManyToManyAnnotationDescriptionFactory() {
+	private ManyToManyAnnotationDescriptionFactory() {
+	}
+	
+	public static ManyToManyAnnotationDescriptionFactory on() {
+		return new ManyToManyAnnotationDescriptionFactory();
 	}
 	
 	@Override
@@ -19,4 +23,10 @@ implements AnnotationDescriptionFactory<ManyToMany, ForeignKeyMetaClassRecord> {
 		return Optional.of(ad);
 	}
 
+	public Optional<AnnotationDescription> buildAnnotationDescription(ForeignKeyMetaClassRecord ma,String mappedBy) {
+		AnnotationDescription ad = AnnotationDescription.Builder.ofType(ManyToMany.class).define("mappedBy", mappedBy).build();
+		return Optional.of(ad);
+	}
+
+	
 }
