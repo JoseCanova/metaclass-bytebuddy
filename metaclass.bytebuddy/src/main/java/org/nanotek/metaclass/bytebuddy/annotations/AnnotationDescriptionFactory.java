@@ -58,14 +58,15 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 				.stream()
 				.filter(att -> att.getColumnName().equals(fk.getColumnName())).findFirst().orElseThrow();
 		}
-	
-	default AnnotationDescription mountParentAnnotation(ForeignKeyMetaClassRecord theRecord,Class<?>annotationClass) {
+
+	//TODO| Fix parent annotation for the correct type
+	default AnnotationDescription mountParentAnnotation(ForeignKeyMetaClassRecord theRecord,Class<? extends Annotation> annotationType) {
 	    return Optional.of(theRecord
 		.foreignKey())
 		.map(fk -> findIdAttribute(fk,theRecord.rdbmsMetaClass()))
 		.map(att -> {
 			return AnnotationDescription
-					.Builder.ofType(OneToOne.class)
+					.Builder.ofType(annotationType)
 					.define("mappedBy", att.getFieldName()).build();
 		}).orElseThrow();
 	}
