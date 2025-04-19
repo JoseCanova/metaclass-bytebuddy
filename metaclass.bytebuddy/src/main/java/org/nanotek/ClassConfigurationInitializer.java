@@ -2,7 +2,6 @@ package org.nanotek;
 
 
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,23 +9,15 @@ import java.util.stream.Stream;
 
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 import org.nanotek.metaclass.BuilderMetaClass;
 import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
-import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ForeignKeyMetaClassRecord;
-import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.JoinTableAnnotationDescriptionFactory;
-import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ManyToManyAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.attributes.AttributeBaseBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.persistence.CascadeType;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
+
 
 /**
  * The Initializer needs a "redesign" now that the ForeignKeys and Index were added 
@@ -49,7 +40,7 @@ public interface ClassConfigurationInitializer {
 	
 	public  List<RdbmsMetaClass> getMetaClasses(String uriEndpont) ;
 
-	default  void configureMetaClasses (String uriEndpont
+	default List<Class<?>> configureMetaClasses (String uriEndpont
 											,MetaClassVFSURLClassLoader byteArrayClassLoader,
 											 MetaClassRegistry<?> metaClassRegistry ) throws Exception{
 		
@@ -104,7 +95,8 @@ public interface ClassConfigurationInitializer {
 		
 		theList.forEach(clazz ->{
     		metaClassRegistry.registryEntityClass(Class.class.<Class<Base<?>>>cast(clazz));});
-		System.exit(0);
+		return theList;
+		//		System.exit(0);
 	}
 	
 	//TODO: implement oneone and onemany with join table indexes.
@@ -161,8 +153,11 @@ public interface ClassConfigurationInitializer {
 		BuilderMetaClass bmc = builderMetaClassRegistry.getBuilderMetaClass(mc.getTableName());
 		Builder <?> builder=bmc.builder();
 		Builder <?> foreignAttributeBuilder = AttributeBaseBuilder
-				.on().generateForeignKeyClassAttributes(mc , 
-						builder,builderMetaClassRegistry,processedForeignKeyRegistry);
+													.on()
+													.generateForeignKeyClassAttributes(mc , 
+															builder,
+															builderMetaClassRegistry,
+															processedForeignKeyRegistry);
 				BuilderMetaClass fabmc = new BuilderMetaClass(foreignAttributeBuilder,mc);
 				builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), fabmc);
 	}
