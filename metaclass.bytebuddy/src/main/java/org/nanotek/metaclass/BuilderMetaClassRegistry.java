@@ -1,10 +1,8 @@
 package org.nanotek.metaclass;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
+import java.util.TreeMap;
 
 /**
  * Provides a collection to hold byte-buddy Builders,
@@ -28,7 +26,7 @@ public class BuilderMetaClassRegistry {
 	}
 
 	private void postConstruct() {
-		registry = new HashMap<>();
+		registry = new TreeMap<String,BuilderMetaClass>();
 	}
 	
 	public BuilderMetaClass 

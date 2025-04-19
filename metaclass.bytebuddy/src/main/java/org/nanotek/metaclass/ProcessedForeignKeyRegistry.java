@@ -1,10 +1,10 @@
 package org.nanotek.metaclass;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 
@@ -17,7 +17,7 @@ public class ProcessedForeignKeyRegistry {
 	}
 
 	private void postConstruct(){
-		registry = new HashMap<>();
+		registry = new HashedMap<>();
 	}
 	
 	public RdbmsMetaClassForeignKey registryForeignKeyMetaClass

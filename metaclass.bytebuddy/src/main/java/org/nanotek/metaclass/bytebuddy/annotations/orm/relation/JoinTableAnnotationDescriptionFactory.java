@@ -5,12 +5,10 @@ import java.util.Optional;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationValue;
-import net.bytebuddy.description.enumeration.EnumerationDescription;
 import net.bytebuddy.description.type.TypeDescription;
 
 public class JoinTableAnnotationDescriptionFactory
@@ -37,11 +35,11 @@ public class JoinTableAnnotationDescriptionFactory
 		
 		AnnotationDescription parentJoinColumn = JoinColumnAnnotationDescriptionFactory
 								.on()
-								.buildAnnotationDescription(m.getRdbmsForeignKeys().get(0)).get();
+								.buildAnnotationDescription(m.getRdbmsForeignKeys().get(1)).get();
 		
 		AnnotationDescription childJoinColumn = JoinColumnAnnotationDescriptionFactory
 								.on()
-								.buildAnnotationDescription(m.getRdbmsForeignKeys().get(1)).get();
+								.buildAnnotationDescription(m.getRdbmsForeignKeys().get(0)).get();
 		
 		TypeDescription joinColumnTypeDescription = new TypeDescription.ForLoadedType(JoinColumn.class);
 	    var avParent = AnnotationValue.ForDescriptionArray.of(joinColumnTypeDescription, new AnnotationDescription[]{parentJoinColumn});

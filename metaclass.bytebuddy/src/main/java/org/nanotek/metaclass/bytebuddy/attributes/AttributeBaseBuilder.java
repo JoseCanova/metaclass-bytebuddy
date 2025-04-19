@@ -12,6 +12,8 @@ import org.nanotek.metaclass.ProcessedForeignKeyRegistry;
 import org.nanotek.metaclass.bytebuddy.Holder;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ForeignKeyMetaClassRecord;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.JoinTableAnnotationDescriptionFactory;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.ManyToManyAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToManyAnnotationDescriptionFactory;
 import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToOneAnnotationDescrptionFactory;
 
@@ -131,7 +133,7 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 									     ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(fk, oneMetaClass,buildermetaclassregistry);
 									     AnnotationDescription oneToOneAnnotationDescription = OneToOneAnnotationDescrptionFactory
 																					    		 .on()
-																					    		 .buildAnnotationDescription( theRecord).orElseThrow();
+																					    		 .buildAnnotationDescription(theRecord).orElseThrow();
 
 										
 										//TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
@@ -185,6 +187,47 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 										buildermetaclassregistry.registryBuilderMetaClass(oneMetaClass.getTableName(), bmc);
 		
 	}
+	
+	default void processManyToManyRelations(RdbmsMetaClass joinMetaClass,
+			BuilderMetaClassRegistry buildermetaclassregistry2) {
+		RdbmsMetaClassForeignKey rmc = joinMetaClass.getRdbmsForeignKeys().get(0);
+		RdbmsMetaClassForeignKey lmc = joinMetaClass.getRdbmsForeignKeys().get(1);
+		
+		BuilderMetaClass rightMc = buildermetaclassregistry2.getBuilderMetaClass(rmc.getTableName());
+		BuilderMetaClass leftMc = buildermetaclassregistry2.getBuilderMetaClass(lmc.getTableName());
+		ForeignKeyMetaClassRecord rmcr = new ForeignKeyMetaClassRecord(rmc, rightMc.metaClass(),buildermetaclassregistry2);
+		ForeignKeyMetaClassRecord lrmc = new ForeignKeyMetaClassRecord(rmc, leftMc.metaClass(),buildermetaclassregistry2);
+		String mappedby =  rightMc.metaClass().getClassName().toLowerCase();
+		AnnotationDescription rad = ManyToManyAnnotationDescriptionFactory.on().buildAnnotationDescription(rmcr,mappedby).get();
+		AnnotationDescription lad = ManyToManyAnnotationDescriptionFactory.on().buildAnnotationDescription(lrmc,CascadeType.ALL).get();
+		AnnotationDescription jcad = JoinTableAnnotationDescriptionFactory.on().buildAnnotationDescription(joinMetaClass).get();
+		
+		
+		TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
+		//Here the type definition is relative to the foreign key class (the holder of the fk attribute)
+		TypeDescription.Generic rgenericTypeDef = TypeDescription.Generic
+											.Builder
+											.parameterizedType(setTypeDescription  ,leftMc.builder().toTypeDescription()).build();
+		TypeDescription.Generic lgenericTypeDef = TypeDescription.Generic
+				.Builder
+				.parameterizedType(setTypeDescription  ,rightMc.builder().toTypeDescription()).build();
+		
+		Builder<?> rb = rightMc.builder()
+							.defineProperty(leftMc.metaClass().getClassName().toLowerCase(), rgenericTypeDef)
+							.annotateField(new AnnotationDescription[] {rad});
+		
+		
+		Builder<?> lb = leftMc.builder()
+				.defineProperty(rightMc.metaClass().getClassName().toLowerCase(), lgenericTypeDef)
+				.annotateField(new AnnotationDescription[] {lad,jcad});
+
+		
+		BuilderMetaClass rn = new BuilderMetaClass(rb,rightMc.metaClass());
+		BuilderMetaClass ln = new BuilderMetaClass(lb,leftMc.metaClass());
+		buildermetaclassregistry2.registryBuilderMetaClass(rightMc.metaClass().getTableName(), rn);
+		buildermetaclassregistry2.registryBuilderMetaClass(leftMc.metaClass().getTableName(), ln);		
+	}
+
 	
 	default RdbmsMetaClassAttribute findIdAttribute(RdbmsMetaClass metaClass) {
 		return metaClass
