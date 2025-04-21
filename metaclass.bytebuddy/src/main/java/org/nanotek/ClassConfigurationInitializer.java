@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.BuilderMetaClass;
@@ -38,7 +40,7 @@ public interface ClassConfigurationInitializer {
 	public static final ProcessedForeignKeyRegistry processedForeignKeyRegistry
 						= new ProcessedForeignKeyRegistry();
 	
-	public  List<RdbmsMetaClass> getMetaClasses(String uriEndpont) ;
+	public  List<RdbmsMetaClass> getMetaClasses(@Nullable String uriEndpont) ;
 
 	default List<Class<?>> configureMetaClasses (String uriEndpont
 											,MetaClassVFSURLClassLoader byteArrayClassLoader,
@@ -85,7 +87,6 @@ public interface ClassConfigurationInitializer {
 					Unloaded<?> unLoaded  = bmc.builder().make();
 					String className = unLoaded.getTypeDescription().getActualName();
 		    		Class<?> clazz = byteArrayClassLoader.defineClass(className, unLoaded.getBytes());
-		    		ClassFileSerializer.saveEntityFile(clazz,byteArrayClassLoader);
 		    		theList.add(clazz);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -134,7 +135,8 @@ public interface ClassConfigurationInitializer {
 
 	default void processManyToManyRelations(RdbmsMetaClass joinMetaClass,
 			BuilderMetaClassRegistry buildermetaclassregistry2) {
-		AttributeBaseBuilder.on().processManyToManyRelations(joinMetaClass, buildermetaclassregistry2);}
+		AttributeBaseBuilder.on().processManyToManyRelations(joinMetaClass, buildermetaclassregistry2);
+	}
 
 
 	default void prepareSimpleAttributes(RdbmsMetaClass mc) {

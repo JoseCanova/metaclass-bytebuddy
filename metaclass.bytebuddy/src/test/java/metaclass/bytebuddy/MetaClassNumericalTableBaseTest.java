@@ -1,6 +1,6 @@
 package metaclass.bytebuddy;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.annotation.Annotation;
@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.Column;
 
-import jakarta.persistence.Column;
-
 public class MetaClassNumericalTableBaseTest {
     
 	
@@ -38,8 +36,10 @@ public class MetaClassNumericalTableBaseTest {
         	assertTrue (list.size()==1);
         	Object theNode = list.get(0);
         	theClass = objectMapper.convertValue(theNode,RdbmsMetaClass.class);
+        	assertNotNull(theClass);
         	assertTrue(theClass.getTableName().equals("simple_numeric_table"));
-    }
+        	System.err.println(theClass.hashCode());
+	}
 	
 	
 	//TODO: implement the class builder with attributes and validation.

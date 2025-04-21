@@ -1,5 +1,6 @@
 package org.nanotek;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -38,4 +39,33 @@ public static void saveEntityFile(Class<?> c, MetaClassVFSURLClassLoader bytearr
 		}
 		
 	}
+
+ default void saveEntityFile(File fileLocation , Class<?> c, MetaClassVFSURLClassLoader bytearrayclassloader2) {
+	
+	String directoryString = fileLocation.getAbsolutePath() ;
+	
+	String fileName =  c.getName().replaceAll("[.]","/").concat(".class");
+	
+	InputStream is = bytearrayclassloader2.getResourceAsStream(fileName);
+
+	try 
+	{
+
+		byte[] classBytes = is.readAllBytes();
+		var className = c.getName();
+		var simpleName = c.getSimpleName();
+		Path dirPath = Paths.get(directoryString, new String[] {});
+		Files.createDirectories(dirPath);
+		var classLocation  = directoryString.concat("/").concat(simpleName).concat(".class");
+		Path classPath = Paths.get(classLocation, new String[] {});
+		if(!Files.exists(classPath, LinkOption.NOFOLLOW_LINKS))
+			Files.createFile(classPath, new FileAttribute[0]);
+		Files.write(classPath, classBytes, StandardOpenOption.WRITE);
+
+		
+	}catch(Exception ex) {
+		ex.printStackTrace();
+	}
+	
+}
 }

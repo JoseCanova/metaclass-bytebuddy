@@ -47,6 +47,7 @@ public class MetaClassBaseTest {
 	@Test
 	void testLookupMethodHandle() throws Exception{
 		Class<?> theClass = testClassBuilder();
+		System.err.println(theClass.hashCode());
 		MethodHandles.Lookup lookup = MethodHandles.lookup();
 		MethodHandles.Lookup plookup = MethodHandles.privateLookupIn(theClass,lookup);
 		Stream
