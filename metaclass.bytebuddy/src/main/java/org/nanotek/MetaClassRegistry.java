@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.nanotek.Base;
-
+//TODO: change the registry implementation to remove inherit coupling of registered classes from Base Interface.
 public class MetaClassRegistry<T extends Base<?>> {
 	
 	Map<UUID , Class<Base<?>>> classRegistry;
