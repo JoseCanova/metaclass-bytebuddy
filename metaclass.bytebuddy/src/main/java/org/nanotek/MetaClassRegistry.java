@@ -10,22 +10,22 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.nanotek.Base;
 //TODO: change the registry implementation to remove inherit coupling of registered classes from Base Interface.
-public class MetaClassRegistry<T extends Base<?>> {
+public class MetaClassRegistry<T> {
 	
-	Map<UUID , Class<Base<?>>> classRegistry;
+	Map<UUID , Class<T>> classRegistry;
 	
-	Map<MultiKey<UUID> , Class<Base<?>>> repositoryRegistry;
+	Map<MultiKey<UUID> , Class<?>> repositoryRegistry;
 	
 	public MetaClassRegistry() {
 		postConstruct();
 	}
 	
 	private void postConstruct() {
-		classRegistry = new DualHashBidiMap<UUID , Class<Base<?>>> ();
-		repositoryRegistry = new DualHashBidiMap<MultiKey<UUID> , Class<Base<?>>> ();
+		classRegistry = new DualHashBidiMap<UUID , Class<T>> ();
+		repositoryRegistry = new DualHashBidiMap<MultiKey<UUID> , Class<?>> ();
 	}
 
-	public UUID registryEntityClass(Class<Base<?>> entityClass) {
+	public UUID registryEntityClass(Class<T> entityClass) {
 
 		UUID uuid = Base.withUUID(entityClass);
 		Optional.
@@ -35,15 +35,15 @@ public class MetaClassRegistry<T extends Base<?>> {
 		
 	}
 
-	public Class<Base<?>> get(UUID uuid){
+	public Class<?> get(UUID uuid){
 		throw new RuntimeException("Not yet implemented");
 	}
 	
-	public Class<Base<?>> getEntityClass(UUID uuid){
+	public Class<?> getEntityClass(UUID uuid){
 		return Optional.ofNullable(classRegistry.get(uuid)).orElseThrow(EntityNotFoundException::new);
 	}
 	
-	public Class<Base<?>> getRepositoryClass(UUID uuid) {
+	public Class<?> getRepositoryClass(UUID uuid) {
 		return repositoryRegistry
 					.keySet()
 					.stream()
@@ -53,7 +53,7 @@ public class MetaClassRegistry<T extends Base<?>> {
 					.findFirst().orElseThrow(RepositoryNotFoundException::new);
 	}
 	
-	public List<Class<Base<?>>> getEntityClasses() {
+	public List<Class<?>> getEntityClasses() {
 		return classRegistry
 					.values()
 					.stream()

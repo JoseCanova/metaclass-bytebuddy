@@ -21,7 +21,7 @@ extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy,
 			RdbmsMetaClass metaclass) {
 		
-		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  ,Base.class).build();
+		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , TypeDescription.Latent.class).build();
 		return bytebuddy
 				.subclass(td)
 				.name(basePackage.concat(metaclass.getClassName()))
