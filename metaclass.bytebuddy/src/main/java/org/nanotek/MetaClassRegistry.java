@@ -60,7 +60,11 @@ public class MetaClassRegistry<T> {
 					.collect(Collectors.toList());
 	}
 	
-	public MultiKey<UUID> registryRepositoryClass(Class<Base<?>> entityClass , Class<Base<?>> repositoryClass){
+	public List<Class<?>> getRepositoryClasses(){
+		return repositoryRegistry.values().stream().collect(Collectors.toList());
+	}
+	
+	public MultiKey<UUID> registryRepositoryClass(Class<?> entityClass , Class<?> repositoryClass){
 		UUID entityUUID = Base.withUUID(entityClass);
 		return Optional
 			.ofNullable(classRegistry.get(entityUUID))
