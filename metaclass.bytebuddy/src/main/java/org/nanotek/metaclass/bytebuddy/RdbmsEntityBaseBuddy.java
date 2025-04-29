@@ -3,6 +3,7 @@ package org.nanotek.metaclass.bytebuddy;
 import java.io.Serializable;
 import java.util.Optional;
 
+import org.nanotek.EntityPathConfigurableClassLoader;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
@@ -41,13 +42,13 @@ implements EntityBaseByteBuddy {
 	}
 	
 	public Builder<?> initializeInternalStatebuilder  (ByteBuddy bytebuddy,
-			RdbmsMetaClass metaclass){
+			RdbmsMetaClass metaclass,EntityPathConfigurableClassLoader classLoader){
 		
 		TypeDescription baseTd=   TypeDescription.ForLoadedType.of(Serializable.class);
-		
+		String thePackage = classLoader.getEntityPath().replaceAll("[/]", ".").concat(".");
 		internalStatebuilder = bytebuddy
 				.subclass(baseTd)
-				.name(basePackage.concat(metaclass.getClassName()))
+				.name(thePackage.concat(metaclass.getClassName()))
 				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get());
 	

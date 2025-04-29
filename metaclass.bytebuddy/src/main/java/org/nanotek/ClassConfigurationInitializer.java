@@ -43,7 +43,7 @@ public interface ClassConfigurationInitializer {
 	public  List<RdbmsMetaClass> getMetaClasses(@Nullable String uriEndpont) ;
 
 	default List<Class<?>> configureMetaClasses (String uriEndpont
-											,MetaClassVFSURLClassLoader byteArrayClassLoader,
+											,EntityPathConfigurableClassLoader byteArrayClassLoader,
 											 MetaClassRegistry<?> metaClassRegistry ) throws Exception{
 		
 		List<RdbmsMetaClass> resultMetaClasses = getMetaClasses(uriEndpont); 
@@ -60,7 +60,7 @@ public interface ClassConfigurationInitializer {
 		entityMetaClasses.
 		stream()
 		.forEach(mc ->{
-			mountRdbmsMetaClassConfiguration(mc);
+			mountRdbmsMetaClassConfiguration(mc,byteArrayClassLoader);
 			prepareSimpleAttributes(mc);
 			prepareForeignAttributes(mc);
 		});
@@ -164,10 +164,10 @@ public interface ClassConfigurationInitializer {
 				builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), fabmc);
 	}
 
-	default RdbmsEntityBaseBuddy mountRdbmsMetaClassConfiguration(RdbmsMetaClass mc) {
+	default RdbmsEntityBaseBuddy mountRdbmsMetaClassConfiguration(RdbmsMetaClass mc, EntityPathConfigurableClassLoader byteArrayClassLoader) {
 		var base = prepareEntityBaseBuddy(mc);
 		var byteBuddy = base.generateByteBuddy();
-		var baseBuilder = base.initializeInternalStatebuilder(byteBuddy, mc);
+		var baseBuilder = base.initializeInternalStatebuilder(byteBuddy, mc,byteArrayClassLoader);
 		BuilderMetaClass bmc = new BuilderMetaClass(baseBuilder,mc);
 		
 		builderMetaClassRegistry

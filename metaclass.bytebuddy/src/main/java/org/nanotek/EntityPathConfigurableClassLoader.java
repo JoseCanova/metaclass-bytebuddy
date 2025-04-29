@@ -9,82 +9,50 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-import org.apache.commons.collections4.map.HashedMap;
+import javax.annotation.Nullable;
 
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+public class EntityPathConfigurableClassLoader extends MetaClassVFSURLClassLoader {
 
-/**
- */
-public class MetaClassVFSURLClassLoader extends InjectionClassLoader {
-
-	protected FileSystem fileSystem;
+	private String repositoryPath;
 	
-	public static final String REPO_PATH="jimfs/org/nanotek/config/spring/repositories/";
-	public static final String ENTITY_PATH="org/nanotek/config/spring/data/";
-	public static final String SERVICE_PATH="org/nanotek/config/spring/services/";
+	private String entityPath;
 	
+	private String servicePath;
 	
-	public MetaClassVFSURLClassLoader(ClassLoader parent, boolean sealed, FileSystem fileSystem) {
-		super(parent, false);
-		this.fileSystem = fileSystem;
-		postConstruct();
-	}
-
-	public void postConstruct() {
-		try { 
-			createEntityFileDirectory();
-		}catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	protected Map<String, Class<?>> doDefineClasses(Map<String, byte[]> typeDefinitions) throws ClassNotFoundException {
-		System.err.println("do define classes");
-		Map<String, Class<?>> types = new HashedMap<>();
+	public EntityPathConfigurableClassLoader(FileSystem fileSystem,
+			 @Nullable String entityPath, @Nullable String repositoryPath, @Nullable String servicePath) {
+		super(EntityPathConfigurableClassLoader.class.getClassLoader(), false, fileSystem);
 		
-		for (Map.Entry<String, byte[]> entry : typeDefinitions.entrySet()) {
-			Class<?> clazz = defineClass(entry.getKey(), entry.getValue(), 0, entry.getValue().length);
-			String typeName = clazz.getName();
-			String simpleName = clazz.getSimpleName();
-			types.put(entry.getKey(), clazz);
-			try {
-				saveFile(typeName,simpleName,entry.getValue());
-			}catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return types;
+		this.entityPath = Optional.ofNullable(entityPath).orElse(ENTITY_PATH);
+		this.repositoryPath = Optional.ofNullable(repositoryPath).orElse(REPO_PATH);
+		this.servicePath = Optional.ofNullable(servicePath).orElse(SERVICE_PATH);
+		createEntityFileDirectory();
 	}
-
-	private void saveFile(String className, String simpleName, byte[] entityBytes2) {
-    	try {
-    		String  directoryString  = className.replaceAll("[.]", "/").replace(simpleName, "");
-    		Path rootPath = fileSystem.getPath(directoryString, new String[0]);
-        	Path classPath = rootPath.resolve(simpleName.concat(".class"));
-        	if(!Files.exists(classPath, LinkOption.NOFOLLOW_LINKS))
-        			Files.createFile(classPath, new FileAttribute[0]);
-			Files.write(classPath, entityBytes2, StandardOpenOption.WRITE);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
 	
-	public  void createEntityFileDirectory() throws IOException {
-    		Path dataPath = fileSystem.getPath(ENTITY_PATH, new String[]{});
-            Files.createDirectories(dataPath);
-        	Path repoPath = fileSystem.getPath(REPO_PATH,new String[]{});
-            Files.createDirectories(repoPath);
-            Path servicePath = fileSystem.getPath(SERVICE_PATH,new String[]{});
-            Files.createDirectories(servicePath);
-    }
+	@Override
+	public void postConstruct() {
+	}
+	 
+	@Override 
+	public  void createEntityFileDirectory() {
+		try {
+			Path dataPath = fileSystem.getPath(entityPath, new String[]{});
+	        Files.createDirectories(dataPath);
+	    	Path repoPath = fileSystem.getPath(repositoryPath,new String[]{});
+	        Files.createDirectories(repoPath);
+	        Path serPath = fileSystem.getPath(servicePath,new String[]{});
+	        Files.createDirectories(serPath);
+		}catch(IOException ex) {
+			ex.printStackTrace();
+			throw new RuntimeException(ex);
+		}
+   }
 	
 	@Override
 	public InputStream getResourceAsStream(String name) {
@@ -119,7 +87,7 @@ public class MetaClassVFSURLClassLoader extends InjectionClassLoader {
 
    @Override
 	public Enumeration<URL> getResources(String name) throws IOException {
-	   if (name.equals(REPO_PATH))
+	   if (name.equals(repositoryPath))
 	   {
 		   List<URL> files =  new ArrayList<>();
 		   System.err.println("getResoures Repositories " +  name);
@@ -136,7 +104,7 @@ public class MetaClassVFSURLClassLoader extends InjectionClassLoader {
 	        }
 	   }
 	   
-	   if (name.equals(ENTITY_PATH))
+	   if (name.equals(entityPath))
 	   {
 		   List<URL> files =  new ArrayList<>();
 		   System.err.println("getResoures Data " +  name);
@@ -154,7 +122,17 @@ public class MetaClassVFSURLClassLoader extends InjectionClassLoader {
 	  
 	   return super.getResources(name);
    }
+
+	public String getRepositoryPath() {
+		return repositoryPath;
+	}
+	
+	public String getEntityPath() {
+		return entityPath;
+	}
+	
+	public String getServicePath() {
+		return servicePath;
+	}
+	
 }
-
-
-
