@@ -25,7 +25,6 @@ import org.nanotek.metaclass.bytebuddy.annotations.validation.NotNullAnnotationD
 import org.nanotek.metaclass.bytebuddy.annotations.validation.SizeAnnotationDescriptionFactory;
 
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 public interface AnnotationDescriptionFactory<T extends Annotation , K> {

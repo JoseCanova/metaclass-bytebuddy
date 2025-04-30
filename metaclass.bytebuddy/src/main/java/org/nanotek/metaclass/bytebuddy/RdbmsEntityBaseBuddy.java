@@ -14,7 +14,6 @@ import org.nanotek.metaclass.bytebuddy.attributes.PropertyTypeChanger;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
@@ -23,13 +22,13 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 public class RdbmsEntityBaseBuddy 
 implements EntityBaseByteBuddy {
 
-	private RdbmsMetaClass metaClass;
-	private byte[] bytes;
+	protected RdbmsMetaClass metaClass;
+	protected byte[] bytes;
 	
-	private Builder<?> internalStatebuilder;
+	protected Builder<?> internalStatebuilder;
 	
 	
-	private RdbmsEntityBaseBuddy(RdbmsMetaClass metaClass) {
+	public RdbmsEntityBaseBuddy(RdbmsMetaClass metaClass) {
 		this.metaClass = metaClass;
 	}
 	
