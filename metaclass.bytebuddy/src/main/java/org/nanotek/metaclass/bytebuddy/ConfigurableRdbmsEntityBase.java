@@ -2,7 +2,7 @@ package org.nanotek.metaclass.bytebuddy;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
-public class ConfigurableRdbmsEntityBase extends RdbmsEntityBaseBuddy {
+public class ConfigurableRdbmsEntityBase  {
 
 	private boolean annotatedValidation = false;
 	
@@ -12,13 +12,9 @@ public class ConfigurableRdbmsEntityBase extends RdbmsEntityBaseBuddy {
 	
 	
 	public ConfigurableRdbmsEntityBase(RdbmsMetaClass metaClass) {
-		super(metaClass);
+		super();
 	}
 	
-	public static ConfigurableRdbmsEntityBase instance(RdbmsMetaClass metaClass) {
-		return new ConfigurableRdbmsEntityBase(metaClass);
-	}
-
 	public boolean isAnnotatedValidation() {
 		return annotatedValidation;
 	}
