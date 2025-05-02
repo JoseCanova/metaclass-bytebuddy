@@ -33,6 +33,7 @@ public class EntityPathConfigurableClassLoader extends MetaClassVFSURLClassLoade
 		this.repositoryPath = Optional.ofNullable(repositoryPath).orElse(REPO_PATH);
 		this.servicePath = Optional.ofNullable(servicePath).orElse(SERVICE_PATH);
 		createEntityFileDirectory();
+		
 	}
 	
 	@Override
@@ -66,7 +67,6 @@ public class EntityPathConfigurableClassLoader extends MetaClassVFSURLClassLoade
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return bol && is !=null? is : super.getResourceAsStream(name);
 	}
 

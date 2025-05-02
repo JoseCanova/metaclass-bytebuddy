@@ -32,14 +32,11 @@ A extends MetaClassAttribute<?>, representing the type of metadata attributes as
 
 public interface MetaByteBuddy<T extends MetaClass<T,A>,A extends MetaClassAttribute<?>> {
 	
-	//TODO: change the scope of this method to public static
 	default ByteBuddy generateByteBuddy() {
 		return new ByteBuddy(ClassFileVersion.JAVA_V22);
 	}
 	
-	//TODO: change the scope of this method to public static
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy, T metaclass){
-		String packageName = "org.nanotek.";
 		metaclass.getClassName();
 		return bytebuddy
 				.subclass(Object.class)

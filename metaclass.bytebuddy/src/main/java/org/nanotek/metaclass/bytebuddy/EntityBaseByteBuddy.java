@@ -12,9 +12,9 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
 public interface EntityBaseByteBuddy 
-extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
+extends MetaByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 
-	public static String basePackage = "org.nanotek.config.spring.data.";
+	public static String basePackage = "org.nanotek.entity";
 	
 	//TODO: change the scope of this method to public static
 	@Override
@@ -24,7 +24,7 @@ extends BaseByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , TypeDescription.Latent.class).build();
 		return bytebuddy
 				.subclass(td)
-				.name(basePackage.concat(metaclass.getClassName()))
+				.name(basePackage.concat(".").concat(metaclass.getClassName()))
 				.annotateType(EntityAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.annotateType(TableAnnotationDescriptionFactory.on().buildAnnotationDescription(metaclass).get())
 				.withHashCodeEquals()

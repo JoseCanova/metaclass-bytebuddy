@@ -21,6 +21,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 
 /**
+ * 
  */
 public class MetaClassVFSURLClassLoader extends InjectionClassLoader {
 
