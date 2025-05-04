@@ -2,7 +2,6 @@ package org.nanotek.metaclass.bytebuddy.annotations.orm.relation;
 
 import java.util.Optional;
 
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 

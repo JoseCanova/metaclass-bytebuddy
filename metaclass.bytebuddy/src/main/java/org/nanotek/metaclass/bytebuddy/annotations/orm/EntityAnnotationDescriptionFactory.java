@@ -19,7 +19,7 @@ implements AnnotationDescriptionFactory<Entity, RdbmsMetaClass> {
 	}
 
 	@Override
-	public Optional< AnnotationDescription> buildAnnotationDescription(RdbmsMetaClass ma) {
+	public Optional<AnnotationDescription> buildAnnotationDescription(RdbmsMetaClass ma) {
 		
 		return Optional.of(ma)
 		.map(c -> AnnotationDescription.
