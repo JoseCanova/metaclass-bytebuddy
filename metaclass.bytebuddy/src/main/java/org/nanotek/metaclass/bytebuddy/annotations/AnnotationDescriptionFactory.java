@@ -88,6 +88,8 @@ public interface AnnotationDescriptionFactory
 		public AnnotationDescription[] build(K k) {
 			var annotations = new ArrayList<AnnotationDescription>();
 			
+			
+			//TODO: separate jakarta validation annotations and jakarta persistence annotations based on pre-configuration.
 			EmailAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 			.ifPresent (a -> annotations.add(a));
 			MaxAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
@@ -102,6 +104,8 @@ public interface AnnotationDescriptionFactory
 			.ifPresent(a -> annotations.add(a));
 			NotEmptyAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 			.ifPresent(a -> annotations.add(a));
+			
+			//jakarta persistence annotation so far implemented..
 			ColumnAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 			.ifPresent(a -> annotations.add(a));
 			IdAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
@@ -112,6 +116,7 @@ public interface AnnotationDescriptionFactory
 		}
 	}
 	
+	//TODO: Foreign Attribute , define better what is a foreign attribute.
 	public static class ForeignAttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
 		
 		public static ForeignAttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute> on () 

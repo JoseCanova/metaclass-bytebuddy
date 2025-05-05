@@ -53,7 +53,7 @@ RelationTypeClassifier{
 		return findMetaClass(theRecord.foreignKey().getJoinTableName(), theRecord.builderMetaClassRegistry());
 	}
 	
-
+	//NOT USED BY NOW
 	private BuilderMetaClass findMetaClass(String tableName, BuilderMetaClassRegistry builderMetaClassRegistry) {
 		return builderMetaClassRegistry.getBuilderMetaClass(tableName);
 	}
