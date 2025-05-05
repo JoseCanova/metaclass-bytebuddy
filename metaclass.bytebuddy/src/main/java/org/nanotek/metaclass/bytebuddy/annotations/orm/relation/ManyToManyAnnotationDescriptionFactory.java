@@ -10,7 +10,7 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationValue;
 import net.bytebuddy.description.enumeration.EnumerationDescription;
 import net.bytebuddy.description.type.TypeDescription;
-
+//TODO: Verify if is necessary a classification mechanism.
 public class ManyToManyAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<ManyToMany, ForeignKeyMetaClassRecord> {
 
