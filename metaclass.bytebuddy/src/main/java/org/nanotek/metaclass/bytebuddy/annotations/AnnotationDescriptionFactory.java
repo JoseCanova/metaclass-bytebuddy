@@ -27,7 +27,8 @@ import org.nanotek.metaclass.bytebuddy.annotations.validation.SizeAnnotationDesc
 import jakarta.persistence.ManyToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
-public interface AnnotationDescriptionFactory<T extends Annotation , K> {
+public interface AnnotationDescriptionFactory
+<T extends Annotation , K> {
 
 	default Optional<AnnotationDescription>  buildAnnotationDescription(){
 		return Optional.empty();
@@ -39,16 +40,6 @@ public interface AnnotationDescriptionFactory<T extends Annotation , K> {
 	
 	default Optional<AnnotationDescription> buildAnnotationDescription(K ma) {
 		return Optional.empty();
-	}
-	
-	default RelationType classifyRelationType(RdbmsMetaClassForeignKey foreignKey, RdbmsMetaClass rdbmsMetaClass) {
-		return rdbmsMetaClass
-		.getRdbmsForeignKeys()
-		.stream()
-		.filter(fk -> fk.equals(foreignKey))
-		.findFirst()
-		.map(fk -> RelationType.CHILD)
-		.orElse(RelationType.PARENT);
 	}
 	
 	default  RdbmsMetaClassAttribute findIdAttribute(RdbmsMetaClassForeignKey fk , RdbmsMetaClass metaClass) {

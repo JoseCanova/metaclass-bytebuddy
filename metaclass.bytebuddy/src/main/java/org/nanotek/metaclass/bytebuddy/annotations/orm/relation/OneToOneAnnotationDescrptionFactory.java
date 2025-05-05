@@ -2,19 +2,18 @@ package org.nanotek.metaclass.bytebuddy.annotations.orm.relation;
 
 import java.util.Optional;
 
-import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
-import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 import org.nanotek.metaclass.BuilderMetaClass;
 import org.nanotek.metaclass.BuilderMetaClassRegistry;
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
-import org.nanotek.metaclass.bytebuddy.annotations.RelationType;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.classification.RelationType;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.classification.RelationTypeClassifier;
 
 import jakarta.persistence.OneToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 public class OneToOneAnnotationDescrptionFactory
-implements AnnotationDescriptionFactory<OneToOne,ForeignKeyMetaClassRecord>{
+implements AnnotationDescriptionFactory<OneToOne,ForeignKeyMetaClassRecord>,
+RelationTypeClassifier{
 
 	private OneToOneAnnotationDescrptionFactory() {
 	}

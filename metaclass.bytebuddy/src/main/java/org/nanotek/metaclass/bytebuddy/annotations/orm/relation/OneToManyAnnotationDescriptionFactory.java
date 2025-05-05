@@ -3,7 +3,8 @@ package org.nanotek.metaclass.bytebuddy.annotations.orm.relation;
 import java.util.Optional;
 
 import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
-import org.nanotek.metaclass.bytebuddy.annotations.RelationType;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.classification.RelationType;
+import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.classification.RelationTypeClassifier;
 
 import jakarta.persistence.OneToMany;
 import net.bytebuddy.description.annotation.AnnotationDescription;
@@ -11,7 +12,8 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 
 //TODO: implement the Annotation Description using as base the sample created in the data-service.
 public class OneToManyAnnotationDescriptionFactory 
-implements AnnotationDescriptionFactory<OneToMany,ForeignKeyMetaClassRecord>{
+implements AnnotationDescriptionFactory<OneToMany,ForeignKeyMetaClassRecord>,
+RelationTypeClassifier{
 
 	private OneToManyAnnotationDescriptionFactory() {
 	}
