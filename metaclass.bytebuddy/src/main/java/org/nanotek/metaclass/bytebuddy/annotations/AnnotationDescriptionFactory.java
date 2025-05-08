@@ -27,6 +27,14 @@ import org.nanotek.metaclass.bytebuddy.annotations.validation.SizeAnnotationDesc
 import jakarta.persistence.ManyToOne;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
+/**
+ * Class that define base methods to annotations that will added on a Type.
+ * Initially it provides support for Class level and Attribute level annotations, 
+ * since the Component by it self is specific to JPA Entity Definitions.
+ *
+ * @param <T> - the Kind of annotations
+ * @param <K> - The Type that provide the elements to build the AnnotationDescription.
+ */
 public interface AnnotationDescriptionFactory
 <T extends Annotation , K> {
 
@@ -60,6 +68,7 @@ public interface AnnotationDescriptionFactory
 					.define("mappedBy", att.getFieldName()).build();
 		}).orElseThrow();
 	}
+	
 	/**
 	 * @deprecated
 	 * @param ma
@@ -78,6 +87,13 @@ public interface AnnotationDescriptionFactory
 			return Optional.empty();
 	}
 	
+	/**
+	 * 
+	 * Define Annotations for native classes attributes. 
+	 * The native attributes are those java.lang e.g. String/Integer/Boolean
+	 * 
+	 * @param <K>
+	 */
 	public static class AttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
 		
 		public static AttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute> on () 
@@ -107,7 +123,7 @@ public interface AnnotationDescriptionFactory
 					NotEmptyAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 					.ifPresent(a -> annotations.add(a));
 			}
-			//jakarta persistence annotation so far implemented..
+			//jakarta persistence annotations so far implemented..
 			ColumnAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 			.ifPresent(a -> annotations.add(a));
 			IdAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
@@ -118,7 +134,12 @@ public interface AnnotationDescriptionFactory
 		}
 	}
 	
-	//TODO: Foreign Attribute , define better what is a foreign attribute.
+	/**
+	 *
+	 * Constructs a non-native class attribute based on rdbms foreign keys.
+	 * 
+	 * @param <K>
+	 */
 	public static class ForeignAttributeAnnotationDescriptionBuilder<K extends RdbmsMetaClassAttribute> {
 		
 		public static ForeignAttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute> on () 
