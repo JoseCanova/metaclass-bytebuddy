@@ -8,6 +8,11 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
 
+/**
+ * Hold the information of which foreign keys
+ * were defined on rbdms schema.
+ * Used during the step of "class relations definitions"
+ */
 public class ProcessedForeignKeyRegistry {
 
 	Map<RdbmsMetaClassForeignKey,RdbmsMetaClass> registry;

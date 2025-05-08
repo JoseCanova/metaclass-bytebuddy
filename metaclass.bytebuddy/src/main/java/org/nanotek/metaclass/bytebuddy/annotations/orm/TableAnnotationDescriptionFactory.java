@@ -8,6 +8,10 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import jakarta.persistence.Table;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
+/**
+ * Produce a jakarta.persistence.Entity Type Annotation.
+ * 
+ */
 public class TableAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<Table,RdbmsMetaClass>{
 

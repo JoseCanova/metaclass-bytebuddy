@@ -5,7 +5,9 @@ import net.bytebuddy.description.annotation.AnnotationList;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
 import net.bytebuddy.description.type.TypeDescription;
-
+/**
+ * @deprecated
+ */
 public class TypeDescriptionHelper {
 
 	public TypeDescriptionHelper() {

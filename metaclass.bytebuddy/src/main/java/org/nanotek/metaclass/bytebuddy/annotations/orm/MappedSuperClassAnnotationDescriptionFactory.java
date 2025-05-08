@@ -8,6 +8,10 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import jakarta.persistence.MappedSuperclass;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
+/**
+ * Produce a jakarta.persistence.Entity Type Annotation.
+ * 
+ */
 public class MappedSuperClassAnnotationDescriptionFactory
 		implements AnnotationDescriptionFactory<MappedSuperclass, RdbmsMetaClass> {
 
