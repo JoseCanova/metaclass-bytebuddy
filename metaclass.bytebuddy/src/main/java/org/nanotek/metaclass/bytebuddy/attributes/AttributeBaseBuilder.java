@@ -2,6 +2,7 @@ package org.nanotek.metaclass.bytebuddy.attributes;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
@@ -38,14 +39,14 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	
 	//TODO: Fix type check 
 	//TODO: verify method implementation for a functional method
-	default T generateClassAttributes(M metaClass , T builder) {
+	default T generateClassAttributes(M metaClass , T builder, boolean enableValidation) {
 		Holder<Builder<?>> holder = Holder.of(builder);
 		List<RdbmsMetaClassAttribute> atts = metaClass.getMetaAttributes();
 		atts
 		.stream()
 		.filter(att -> att.isPartOfForeignKey()==false)
 		.forEach(att -> {
-			AnnotationDescription[] descs = buildAnnotations(att);
+			AnnotationDescription[] descs = buildAnnotations(att,enableValidation);
 							Class<?> theJavaClass = getJavaClass(att.getClazz());
 							Builder<?> newBuilder = holder.get().orElseThrow()
 									.defineProperty(att.getFieldName(), theJavaClass)
@@ -256,8 +257,8 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	}
 
 
-	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] buildAnnotations(K att) {
-		return new AnnotationDescriptionFactory.AttributeAnnotationDescriptionBuilder<K>().build(att);
+	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] buildAnnotations(K att,boolean enableValidation) {
+		return new AnnotationDescriptionFactory.AttributeAnnotationDescriptionBuilder<K>().build(att,enableValidation);
 	}
 	
 	default <K extends RdbmsMetaClassAttribute> AnnotationDescription[] 

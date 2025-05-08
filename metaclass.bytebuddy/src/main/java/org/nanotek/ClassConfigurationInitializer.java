@@ -4,9 +4,11 @@ package org.nanotek;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.lang.Enum;
+
 import javax.annotation.Nullable;
 
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
@@ -44,34 +46,37 @@ public interface ClassConfigurationInitializer {
 
 	default List<Class<?>> configureMetaClasses (String uriEndpont
 											,EntityPathConfigurableClassLoader byteArrayClassLoader,
-											 MetaClassRegistry<?> metaClassRegistry ) throws Exception{
+											 MetaClassRegistry<?> metaClassRegistry , Map<String,Object> configurationParameters) throws Exception{
 		
+		
+		
+				
 		List<RdbmsMetaClass> resultMetaClasses = getMetaClasses(uriEndpont); 
 		List<RdbmsMetaClass> joinMetaClasses = new ArrayList<>();
 		//TODO: need data structures for metaclasses and join tables (represented as metaclasses)
 		List<RdbmsMetaClass> entityMetaClasses = 	resultMetaClasses
-												.stream()
-												.filter(mc -> {var isJoin = mc.isJoinMetaClass();
-																if(isJoin)
-																	joinMetaClasses.add(mc);
-																return !isJoin;})
-												.collect(Collectors.toList());
+															.stream()
+															.filter(mc -> {var isJoin = mc.isJoinMetaClass();
+																			if(isJoin)
+																				joinMetaClasses.add(mc);
+																			return !isJoin;})
+															.collect(Collectors.toList());
 
 		entityMetaClasses.
-		stream()
-		.forEach(mc ->{
-			mountRdbmsMetaClassConfiguration(mc,byteArrayClassLoader);
-			prepareSimpleAttributes(mc);
-			prepareForeignAttributes(mc);
-		});
+				stream()
+				.forEach(mc ->{
+					mountRdbmsMetaClassConfiguration(mc,byteArrayClassLoader);
+					prepareSimpleAttributes(mc);
+					prepareForeignAttributes(mc);
+				});
 		
 		processedForeignKeyRegistry
-		.getProcessedForeignKeys()
-		.forEach(fk ->{
-			AttributeBaseBuilder
-			.on()
-			.generateParentRelationAttribute(fk,builderMetaClassRegistry);
-		});
+				.getProcessedForeignKeys()
+				.forEach(fk ->{
+					AttributeBaseBuilder
+					.on()
+					.generateParentRelationAttribute(fk,builderMetaClassRegistry);
+				});
 		
 		//TODO: implement relation classification based on index defined for fk's
 		//TODO: move the code to metaclass-bytebuddy.
@@ -139,14 +144,18 @@ public interface ClassConfigurationInitializer {
 	}
 
 
-	default void prepareSimpleAttributes(RdbmsMetaClass mc) {
+	default void prepareSimpleAttributes(RdbmsMetaClass mc, Map<String,Object> configurationParameters) {
 	
-				
+				Boolean enableValidation = Optional
+						.ofNullable (configurationParameters
+								.get(configurationParameters.get("enableValidation")))
+								.map(v -> Boolean.class.cast(v)).orElse(false);		
+		
 				BuilderMetaClass bmc = builderMetaClassRegistry.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();
 				Builder <?> attributeBuilder = AttributeBaseBuilder
 												.on().generateClassAttributes(mc , 
-														builder);
+														builder,enableValidation);
 				BuilderMetaClass abmc = new BuilderMetaClass(attributeBuilder,mc);
 				builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
 	}

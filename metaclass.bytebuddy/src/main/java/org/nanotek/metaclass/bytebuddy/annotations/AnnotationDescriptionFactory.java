@@ -85,26 +85,28 @@ public interface AnnotationDescriptionFactory
 			return new AttributeAnnotationDescriptionBuilder<RdbmsMetaClassAttribute>();
 		}
 		
-		public AnnotationDescription[] build(K k) {
+		public AnnotationDescription[] build(K k, boolean enableValidation) {
 			var annotations = new ArrayList<AnnotationDescription>();
 			
 			
-			//TODO: separate jakarta validation annotations and jakarta persistence annotations based on pre-configuration.
-			EmailAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent (a -> annotations.add(a));
-			MaxAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a->annotations.add(a));
-			MinAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a -> annotations.add(a));
-			SizeAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a -> annotations.add(a));
-			NotBlankAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a ->annotations.add(a));
-			NotNullAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a -> annotations.add(a));
-			NotEmptyAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
-			.ifPresent(a -> annotations.add(a));
 			
+			if(enableValidation) {
+					//TODO: separate jakarta validation annotations and jakarta persistence annotations based on pre-configuration.
+					EmailAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent (a -> annotations.add(a));
+					MaxAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a->annotations.add(a));
+					MinAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a -> annotations.add(a));
+					SizeAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a -> annotations.add(a));
+					NotBlankAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a ->annotations.add(a));
+					NotNullAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a -> annotations.add(a));
+					NotEmptyAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
+					.ifPresent(a -> annotations.add(a));
+			}
 			//jakarta persistence annotation so far implemented..
 			ColumnAnnotationDescriptionFactory.on().buildAnnotationDescription(k)
 			.ifPresent(a -> annotations.add(a));
