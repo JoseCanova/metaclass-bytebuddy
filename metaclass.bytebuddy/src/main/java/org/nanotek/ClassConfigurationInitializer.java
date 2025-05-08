@@ -46,7 +46,8 @@ public interface ClassConfigurationInitializer {
 
 	default List<Class<?>> configureMetaClasses (String uriEndpont
 											,EntityPathConfigurableClassLoader byteArrayClassLoader,
-											 MetaClassRegistry<?> metaClassRegistry , Map<String,Object> configurationParameters) throws Exception{
+											 MetaClassRegistry<?> metaClassRegistry, 
+											 Map<String,Object> configurationParameters) throws Exception{
 		
 		
 		
@@ -66,7 +67,7 @@ public interface ClassConfigurationInitializer {
 				stream()
 				.forEach(mc ->{
 					mountRdbmsMetaClassConfiguration(mc,byteArrayClassLoader);
-					prepareSimpleAttributes(mc);
+					prepareSimpleAttributes(mc,configurationParameters);
 					prepareForeignAttributes(mc);
 				});
 		
@@ -173,6 +174,12 @@ public interface ClassConfigurationInitializer {
 				builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), fabmc);
 	}
 
+	/**
+	 * 
+	 * @param mc
+	 * @param byteArrayClassLoader
+	 * @return a bytebuddy representation of the metaclass data. 
+	 */
 	default RdbmsEntityBaseBuddy mountRdbmsMetaClassConfiguration(RdbmsMetaClass mc, EntityPathConfigurableClassLoader byteArrayClassLoader) {
 		var base = prepareEntityBaseBuddy(mc);
 		var byteBuddy = base.generateByteBuddy();

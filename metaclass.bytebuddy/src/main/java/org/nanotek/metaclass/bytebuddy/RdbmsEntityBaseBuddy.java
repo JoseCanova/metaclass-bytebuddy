@@ -19,6 +19,9 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.DynamicType.Unloaded;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
+/**
+ * A container class for the bytebuddy builder and the metaclass representation of the RDBMS table.
+ */
 public class RdbmsEntityBaseBuddy 
 implements EntityBaseByteBuddy {
 
@@ -53,17 +56,19 @@ implements EntityBaseByteBuddy {
 	
 		return internalStatebuilder;
 	}
-	
-	
+
+
+	//TODO: review methods for removal on future.
 	public Class<?> getLoadedClassInDefaultClassLoader(ClassLoader classLoader){
-		ByteBuddy buddy = this.generateByteBuddy() ;
 		
+		
+		ByteBuddy buddy = this.generateByteBuddy() ;
 		Builder<?> bd = this.generateBuilderWithClassName
 					(buddy, metaClass);
 		Builder<?> builder =   AttributeBaseBuilder
 				.on()
 				.generateClassAttributes(metaClass , 
-				bd);
+				bd,false);
 		
 			Unloaded<?> loaded = 
 					Optional.of(builder)
@@ -82,7 +87,7 @@ implements EntityBaseByteBuddy {
 		Builder<?> builder =   AttributeBaseBuilder
 				.on()
 				.generateClassAttributes(metaClass , 
-				bd);
+				bd,false);
 		
 			Unloaded<?> unloaded = 
 					Optional.of(builder)
@@ -97,7 +102,7 @@ implements EntityBaseByteBuddy {
 	}
 	
 	public <K extends RdbmsMetaClassAttribute> AnnotationDescription[] buildAnnotations(K att) {
-		return new AnnotationDescriptionFactory.AttributeAnnotationDescriptionBuilder<K>().build(att);
+		return new AnnotationDescriptionFactory.AttributeAnnotationDescriptionBuilder<K>().build(att,false);
 	}
 	
 	
