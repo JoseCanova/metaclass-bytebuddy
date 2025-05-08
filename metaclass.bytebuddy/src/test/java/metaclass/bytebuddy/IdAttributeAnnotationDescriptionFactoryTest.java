@@ -30,7 +30,7 @@ public class IdAttributeAnnotationDescriptionFactoryTest {
 	        AnnotationDescription[] as = AnnotationDescriptionFactory
 	        .AttributeAnnotationDescriptionBuilder
 	        .on()
-	        .build(attribute);
+	        .build(attribute,false);
 	        
 	        assertTrue(as.length>0);
 	        
