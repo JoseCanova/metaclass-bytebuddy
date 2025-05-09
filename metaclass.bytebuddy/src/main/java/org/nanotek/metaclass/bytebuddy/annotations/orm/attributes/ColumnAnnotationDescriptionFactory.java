@@ -9,6 +9,9 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import jakarta.persistence.Column;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
+/**
+ * Produces jakarta.persistence.Column type annotation.
+ */
 public class ColumnAnnotationDescriptionFactory
 		implements AnnotationDescriptionFactory<Column, RdbmsMetaClassAttribute> {
 

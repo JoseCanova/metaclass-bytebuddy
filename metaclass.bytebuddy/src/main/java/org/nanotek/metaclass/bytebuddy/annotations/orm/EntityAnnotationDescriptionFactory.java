@@ -9,7 +9,7 @@ import jakarta.persistence.Entity;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 /**
- * Produce a jakarta.persistence.Entity Type Annotation.
+ * Produces a jakarta.persistence.Entity Type Annotation.
  * 
  */
 public class EntityAnnotationDescriptionFactory 

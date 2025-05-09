@@ -9,7 +9,7 @@ import jakarta.persistence.MappedSuperclass;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 /**
- * Produce a jakarta.persistence.Entity Type Annotation.
+ * Produces a jakarta.persistence.MappedSupperClass Type Annotation.
  * 
  */
 public class MappedSuperClassAnnotationDescriptionFactory

@@ -10,6 +10,9 @@ import jakarta.persistence.TemporalType;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationDescription.Builder;
 
+/**
+ * Produces jakarta.persistece.Temporal type annotation.
+ */
 public class TemporalAnnotationDescriptionFactory
 		implements AnnotationDescriptionFactory<Temporal, RdbmsMetaClassAttribute> {
 

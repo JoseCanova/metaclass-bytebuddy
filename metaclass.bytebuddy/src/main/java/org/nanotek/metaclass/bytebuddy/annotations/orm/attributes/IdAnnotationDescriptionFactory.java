@@ -8,7 +8,9 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import jakarta.persistence.Id;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
-//TODO:mount junit test
+/**
+ * Produces jakarta.persistence.Id type annotation.
+ */
 public class IdAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<Id, RdbmsMetaClassAttribute> {
 

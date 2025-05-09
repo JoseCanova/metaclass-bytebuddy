@@ -8,7 +8,11 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 import jakarta.persistence.Basic;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
-//TODO: implement logic that based on mattribute fill the Basic annotation definition
+/**
+ * 
+ * Produces jakarta.persistence.Basic type annotation.
+ * 
+ */
 public class BasicAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<Basic,RdbmsMetaClassAttribute>{
 
