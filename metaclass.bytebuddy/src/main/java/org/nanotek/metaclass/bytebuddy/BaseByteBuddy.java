@@ -9,8 +9,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
 /**
- * Define a Type implementing the Serializable to comply with 
- * ORM frameworks that requires entities to extend serialization mechanisms.
+ * Define a type based upon in the @see MetaClass className.
  * @param <T>
  * @param <A>
  */

@@ -13,7 +13,7 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 
 /**
  * Generates the ByteBuddy builder based upon in a
- * @see RdbmsMetaClass definition.
+ * @see RdbmsMetaClass definition and a default package hierarchy.
  * 
  */
 public interface EntityBaseByteBuddy 
@@ -23,7 +23,7 @@ extends MetaByteBuddy<RdbmsMetaClass, RdbmsMetaClassAttribute> {
 	
 	@Override
 	default Builder<?> generateBuilderWithClassName(ByteBuddy bytebuddy,
-			RdbmsMetaClass metaclass) {
+													RdbmsMetaClass metaclass) {
 		
 		TypeDefinition td = TypeDescription.Generic.Builder.parameterizedType(Base.class  , TypeDescription.Latent.class).build();
 		return bytebuddy

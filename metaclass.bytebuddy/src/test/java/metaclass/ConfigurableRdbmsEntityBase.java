@@ -1,4 +1,4 @@
-package org.nanotek.metaclass.bytebuddy;
+package metaclass;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
@@ -8,7 +8,12 @@ import javax.annotation.Nullable;
 
 import org.nanotek.BaseInstantiationException;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
+import org.nanotek.metaclass.bytebuddy.EntityBaseByteBuddy;
 
+/**
+ * Simple delegate class that will be used to test the
+ * class implementations of EntityBaseByteBuddy if necessary. 
+ */
 public class ConfigurableRdbmsEntityBase {
 
 	private String strategy;
@@ -20,12 +25,12 @@ public class ConfigurableRdbmsEntityBase {
 	}
 	
 
-	public EntityBaseByteBuddy getEntityBaseByteBuddy(Supplier<RdbmsMetaClass> metaClass) {
+	public <T extends EntityBaseByteBuddy> T getEntityBaseByteBuddy(Supplier<RdbmsMetaClass> metaClass) {
 		
-		Class<?> clazz = EntityBaseBuddyRegistry.getStrategy(strategy);
+		Class<T> clazz = new EntityBaseBuddyRegistry<T>().getStrategy(strategy);
 		
 		Optional<?> opt = newInstance(clazz, new Object[] {metaClass.get()}, RdbmsMetaClass.class);
-		return opt.map(o -> EntityBaseByteBuddy.class.cast(o)).orElseThrow();
+		return (T) opt.get();
 			
 	}
 	

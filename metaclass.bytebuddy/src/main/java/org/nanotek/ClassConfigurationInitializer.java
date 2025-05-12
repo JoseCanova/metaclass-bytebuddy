@@ -42,7 +42,7 @@ public interface ClassConfigurationInitializer {
 	public static final ProcessedForeignKeyRegistry processedForeignKeyRegistry
 						= new ProcessedForeignKeyRegistry();
 	
-	public  List<RdbmsMetaClass> getMetaClasses(@Nullable String uriEndpont) ;
+	public List<RdbmsMetaClass> getMetaClasses(@Nullable String uriEndpont) ;
 
 	default List<Class<?>> configureMetaClasses (String uriEndpont
 											,EntityPathConfigurableClassLoader byteArrayClassLoader,

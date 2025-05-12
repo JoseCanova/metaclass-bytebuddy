@@ -1,9 +1,6 @@
 package org.nanotek.metaclass.bytebuddy.attributes;
 
-
 import java.util.List;
-import java.util.Map;
-
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassAttribute;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClassForeignKey;
@@ -20,22 +17,17 @@ import org.nanotek.metaclass.bytebuddy.annotations.orm.relation.OneToOneAnnotati
 
 import jakarta.persistence.CascadeType;
 import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.description.annotation.AnnotationValue;
-import net.bytebuddy.description.enumeration.EnumerationDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 
-
 //TODO: verify best is class name is the more appropriate name.
 public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMetaClass> {
 
-	
 	public static <T extends Builder<?> , M extends RdbmsMetaClass>  
 		AttributeBaseBuilder<T,M> on(){
 		return new AttributeBaseBuilder<T,M>(){};
 	}
-	
 	
 	//TODO: Fix type check 
 	//TODO: verify method implementation for a functional method
@@ -53,7 +45,6 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 									.annotateField(descs);
 							holder.put(newBuilder);
 		});
-		
 		return (T)holder.get(). orElseThrow();
 	}
 	
@@ -86,10 +77,8 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 							.defineProperty(parentAttribute.getFieldName(), td)
 							.annotateField(descs);
 				}).get();
-			
 			holder.put(mutableBuilder);
 		});
-		
 		return (T)holder.get(). orElseThrow();
 	};
 	
@@ -121,15 +110,15 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		RdbmsMetaClass oneMetaClass = oneBuilderMetaClass.metaClass();
 		Builder<?> oneBuilder = oneBuilderMetaClass.builder();
 		//default one attribute for primary key using primary key field name for Many Side
-		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
+//		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
 		BuilderMetaClass childBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
 		RdbmsMetaClass childMetaClass = childBuilderMetaClass.metaClass();
 		Builder<?> childBuilder = childBuilderMetaClass.builder();
 		
 										//TODO: move this to the proper annotation factory.
-										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
-									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
-									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
+//										 TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
+//									     EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
+//									     var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
 										
 									     ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(fk, oneMetaClass,buildermetaclassregistry);
 									     AnnotationDescription oneToOneAnnotationDescription = OneToOneAnnotationDescrptionFactory
@@ -157,15 +146,15 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		RdbmsMetaClass oneMetaClass = oneBuilderMetaClass.metaClass();
 		Builder<?> oneBuilder = oneBuilderMetaClass.builder();
 		//default one attribute for primary key using primary key field name for Many Side
-		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
+//		RdbmsMetaClassAttribute mappedByAttribute = findIdAttribute(oneMetaClass);
 		BuilderMetaClass manyBuilderMetaClass =  buildermetaclassregistry.getBuilderMetaClass(fk.getJoinTableName());
 		RdbmsMetaClass manyMetaClass = manyBuilderMetaClass.metaClass();
 		Builder<?> manyBuilder = manyBuilderMetaClass.builder();
 		
 										
-										TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
-									    EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
-									    var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
+//										TypeDescription cascadeTypeTd = new TypeDescription.ForLoadedType(CascadeType.class);
+//									    EnumerationDescription cascadeTypeEd = new EnumerationDescription.ForLoadedEnumeration(CascadeType.ALL);
+//									    var av = AnnotationValue.ForDescriptionArray.of(cascadeTypeTd, new EnumerationDescription[]{cascadeTypeEd});
 									    
 									    ForeignKeyMetaClassRecord theRecord = new  ForeignKeyMetaClassRecord(fk, oneMetaClass,buildermetaclassregistry);
 									    
@@ -206,12 +195,14 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 		
 		TypeDescription setTypeDescription = new TypeDescription.ForLoadedType(java.util.Set.class );
 		//Here the type definition is relative to the foreign key class (the holder of the fk attribute)
-		TypeDescription.Generic rgenericTypeDef = TypeDescription.Generic
-											.Builder
-											.parameterizedType(setTypeDescription  ,leftMc.builder().toTypeDescription()).build();
-		TypeDescription.Generic lgenericTypeDef = TypeDescription.Generic
-				.Builder
-				.parameterizedType(setTypeDescription  ,rightMc.builder().toTypeDescription()).build();
+		TypeDescription.Generic rgenericTypeDef = TypeDescription
+															.Generic
+															.Builder
+															.parameterizedType(setTypeDescription  ,leftMc.builder().toTypeDescription()).build();
+		TypeDescription.Generic lgenericTypeDef = TypeDescription
+													.Generic
+													.Builder
+													.parameterizedType(setTypeDescription  ,rightMc.builder().toTypeDescription()).build();
 		
 		Builder<?> rb = rightMc.builder()
 							.defineProperty(leftMc.metaClass().getClassName().toLowerCase(), rgenericTypeDef)

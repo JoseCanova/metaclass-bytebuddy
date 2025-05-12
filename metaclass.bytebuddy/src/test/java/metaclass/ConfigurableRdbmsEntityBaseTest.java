@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
-import org.nanotek.metaclass.bytebuddy.ConfigurableRdbmsEntityBase;
 import org.nanotek.metaclass.bytebuddy.RdbmsEntityBaseBuddy;
 
 public class ConfigurableRdbmsEntityBaseTest {

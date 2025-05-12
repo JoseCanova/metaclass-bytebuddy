@@ -17,7 +17,8 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-public class EntityPathConfigurableClassLoader extends MetaClassVFSURLClassLoader {
+public class EntityPathConfigurableClassLoader 
+extends MetaClassVFSURLClassLoader {
 
 	private String repositoryPath;
 	
