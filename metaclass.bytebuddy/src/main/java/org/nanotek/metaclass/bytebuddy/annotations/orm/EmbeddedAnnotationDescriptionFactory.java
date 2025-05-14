@@ -5,7 +5,7 @@ import org.nanotek.metaclass.bytebuddy.annotations.AnnotationDescriptionFactory;
 
 import jakarta.persistence.Entity;
 
-public class EmbeddedAnnotationDescriptFactory
+public class EmbeddedAnnotationDescriptionFactory
 implements AnnotationDescriptionFactory<Entity, RdbmsMetaClass> {
 
 }

@@ -40,8 +40,8 @@ public interface AnnotationDescriptionFactory
 <T extends Annotation , K> {
 
 	/**
-	 * Empty method that build an AnnotationDescription.
-	 * @return
+	 * Empty method that build an AnnotationDescription of a given type K.
+	 * @return The default method returns an Optional.empty.
 	 */
 	default Optional<AnnotationDescription>  buildAnnotationDescription(){
 		return Optional.empty();
