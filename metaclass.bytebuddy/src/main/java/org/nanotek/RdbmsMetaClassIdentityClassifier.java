@@ -4,11 +4,14 @@ import java.util.Optional;
 
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
-public interface CompositeKeyClassifier {
+public interface RdbmsMetaClassIdentityClassifier {
 
-	default Optional<MetaClassClassification> 
-			verifyMultipleAttributeKeyTable(RdbmsMetaClass mc) {
-		return mc.getIdentity().getColumns().stream().count() > 1? 
+	default Optional<MetaClassIdentityClassification> 
+			classifyIdentity(RdbmsMetaClass mc) {
+		return mc.getIdentity()
+					.getColumns()
+					.stream()
+					.count() > 1? 
 						MetaClassClassificationBuilder.on().withMetaClassClassification(KeyClassification.COMPOSITE).build()
 								:MetaClassClassificationBuilder.on().withMetaClassClassification(KeyClassification.SIMPLE).build();
 	}
@@ -19,19 +22,19 @@ public interface CompositeKeyClassifier {
 				return new MetaClassClassificationBuilder();
 			}
 		
-			private MetaClassClassification metaClassClassification;
+			private MetaClassIdentityClassification metaClassClassification;
 
 			MetaClassClassificationBuilder withMetaClassClassification(KeyClassification kc) {
-				this.metaClassClassification  = new MetaClassClassification(kc);
+				this.metaClassClassification  = new MetaClassIdentityClassification(kc);
 				return this;
 			}
 			
-			Optional<MetaClassClassification> build(){
+			Optional<MetaClassIdentityClassification> build(){
 				return Optional.ofNullable(metaClassClassification);
 			}
 	}
 	
-	public static record MetaClassClassification(KeyClassification classification) {
+	public static record MetaClassIdentityClassification(KeyClassification classification) {
 	}
 	
 	enum KeyClassification{
