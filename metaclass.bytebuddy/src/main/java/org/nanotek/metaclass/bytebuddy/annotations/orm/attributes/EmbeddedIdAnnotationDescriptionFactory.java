@@ -10,19 +10,20 @@ import jakarta.persistence.Id;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 
 /**
- * Produces jakarta.persistence.EmbeddedId type annotation.
+ * Produces jakarta.persistence.EmbeddedId using  single attribute type annotation.
  */
-public class EmbbedIdAnnotationDescriptionFactory 
+public class EmbeddedIdAnnotationDescriptionFactory 
 implements AnnotationDescriptionFactory<EmbeddedId, RdbmsMetaClassAttribute> {
 
-	private EmbbedIdAnnotationDescriptionFactory() {
+	private EmbeddedIdAnnotationDescriptionFactory() {
 	}
 	
-	public static EmbbedIdAnnotationDescriptionFactory on() {
-		return new EmbbedIdAnnotationDescriptionFactory();
+	public static EmbeddedIdAnnotationDescriptionFactory on() {
+		return new EmbeddedIdAnnotationDescriptionFactory();
 	}
 
 	@Override
+	//TODO: Change here, embeddedid can be a group of attributes.
 	public Optional<AnnotationDescription> buildAnnotationDescription(RdbmsMetaClassAttribute ma) {
 		
 		return Optional.of(ma)
@@ -32,5 +33,4 @@ implements AnnotationDescriptionFactory<EmbeddedId, RdbmsMetaClassAttribute> {
 						.build());
 		
 	}
-
 }
