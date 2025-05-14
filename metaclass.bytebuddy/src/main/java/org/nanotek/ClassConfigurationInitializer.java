@@ -34,20 +34,21 @@ import net.bytebuddy.dynamic.DynamicType.Unloaded;
  * Third step is the configuration of attributes that are internal attributes 
  * of the "rdbms table" which means they are not dependent of
  */
-public interface ClassConfigurationInitializer {
+public interface ClassConfigurationInitializer 
+extends CompositeKeyClassifier{
 	
 	public static final BuilderMetaClassRegistry builderMetaClassRegistry 
-							= new BuilderMetaClassRegistry();
+													= new BuilderMetaClassRegistry();
 	
 	public static final ProcessedForeignKeyRegistry processedForeignKeyRegistry
-						= new ProcessedForeignKeyRegistry();
+													= new ProcessedForeignKeyRegistry();
 	
 	public List<RdbmsMetaClass> getMetaClasses(@Nullable String uriEndpont) ;
 
-	default List<Class<?>> configureMetaClasses (String uriEndpont
-											,EntityPathConfigurableClassLoader byteArrayClassLoader,
-											 MetaClassRegistry<?> metaClassRegistry, 
-											 Map<String,Object> configurationParameters) throws Exception{
+	default List<Class<?>> configureMetaClasses (String uriEndpont,
+														EntityPathConfigurableClassLoader byteArrayClassLoader,
+														MetaClassRegistry<?> metaClassRegistry, 
+														Map<String,Object> configurationParameters) throws Exception{
 		
 		
 		
@@ -152,8 +153,10 @@ public interface ClassConfigurationInitializer {
 								.get(configurationParameters.get("enableValidation")))
 								.map(v -> Boolean.class.cast(v)).orElse(false);		
 		
-				BuilderMetaClass bmc = builderMetaClassRegistry.getBuilderMetaClass(mc.getTableName());
+				BuilderMetaClass bmc = builderMetaClassRegistry
+												.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();
+				verifyMultipleAttributeKeyTable(mc);
 				Builder <?> attributeBuilder = AttributeBaseBuilder
 												.on().generateClassAttributes(mc , 
 														builder,enableValidation);
