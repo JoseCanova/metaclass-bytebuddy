@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import org.nanotek.RdbmsMetaClassIdentityClassifier.MetaClassIdentityClassification;
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.BuilderMetaClass;
@@ -152,7 +153,18 @@ extends RdbmsMetaClassIdentityClassifier{
 						.ofNullable (configurationParameters
 								.get(configurationParameters.get("enableValidation")))
 								.map(v -> Boolean.class.cast(v)).orElse(false);		
-		
+		        
+				
+				Optional<MetaClassIdentityClassification> classificationOpt = RdbmsMetaClassIdentityClassifier.on().classifyIdentity(mc);
+				
+				classificationOpt.ifPresentOrElse(keyType -> {
+							          String type = keyType.classification().name();
+							          mc.setIdentityClassification(type);
+					}, () -> 
+							{
+								throw new RuntimeException();
+				});
+				
 				BuilderMetaClass bmc = builderMetaClassRegistry
 												.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();

@@ -15,11 +15,10 @@ import org.nanotek.RdbmsMetaClassIdentityClassifier;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+//TODO:Move the identity classifier to the support project.
 public class RdbmsMetaClassIdentityClassifierTest 
 implements ClassConfigurationInitializer,RdbmsMetaClassIdentityClassifier{
 
-	
 	private List<RdbmsMetaClass> metaClasses;
 	
 	@BeforeEach
@@ -35,10 +34,14 @@ implements ClassConfigurationInitializer,RdbmsMetaClassIdentityClassifier{
 	void testCompositeKeyClassifier() {
 		assertNotNull(metaClasses);
 		assertTrue(metaClasses.size() == 1);
-		Optional<MetaClassIdentityClassification> optClassification = classifyIdentity(metaClasses.get(0));
-		optClassification.ifPresentOrElse(classifier ->
+		RdbmsMetaClass metaClass = metaClasses.get(0);
+
+		Optional<MetaClassIdentityClassification> optClassification = classifyIdentity(metaClass);
+		optClassification
+		.ifPresentOrElse(classifier ->
 			assertTrue(classifier.classification().equals(KeyClassification.COMPOSITE))
 		,() -> {throw new RuntimeException("");});
+		assertTrue(!metaClass.getIdentityClassification().isEmpty());
 	}
 	
 	

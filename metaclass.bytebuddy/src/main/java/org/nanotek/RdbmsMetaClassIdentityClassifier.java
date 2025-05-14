@@ -6,6 +6,10 @@ import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
 public interface RdbmsMetaClassIdentityClassifier {
 
+	public static RdbmsMetaClassIdentityClassifier on() {
+		return new RdbmsMetaClassIdentityClassifier() {};
+	}
+	
 	default Optional<MetaClassIdentityClassification> 
 			classifyIdentity(RdbmsMetaClass mc) {
 		return mc.getIdentity()
