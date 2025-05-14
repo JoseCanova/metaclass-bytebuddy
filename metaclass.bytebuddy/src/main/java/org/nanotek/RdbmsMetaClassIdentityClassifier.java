@@ -37,7 +37,7 @@ public interface RdbmsMetaClassIdentityClassifier {
 	public static record MetaClassIdentityClassification(KeyClassification classification) {
 	}
 	
-	enum KeyClassification{
+	public enum KeyClassification{
 		SIMPLE,
 		COMPOSITE
 	}

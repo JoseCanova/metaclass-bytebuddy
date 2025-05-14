@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,10 @@ implements ClassConfigurationInitializer,RdbmsMetaClassIdentityClassifier{
 	void testCompositeKeyClassifier() {
 		assertNotNull(metaClasses);
 		assertTrue(metaClasses.size() == 1);
+		Optional<MetaClassIdentityClassification> optClassification = classifyIdentity(metaClasses.get(0));
+		optClassification.ifPresentOrElse(classifier ->
+			assertTrue(classifier.classification().equals(KeyClassification.COMPOSITE))
+		,() -> {throw new RuntimeException("");});
 	}
 	
 	

@@ -145,7 +145,7 @@ extends RdbmsMetaClassIdentityClassifier{
 		AttributeBaseBuilder.on().processManyToManyRelations(joinMetaClass, buildermetaclassregistry2);
 	}
 
-
+	//TODO: here will be added the classification of the RdbmsMetaClassIdentity
 	default void prepareSimpleAttributes(RdbmsMetaClass mc, Map<String,Object> configurationParameters) {
 	
 				Boolean enableValidation = Optional
@@ -156,7 +156,6 @@ extends RdbmsMetaClassIdentityClassifier{
 				BuilderMetaClass bmc = builderMetaClassRegistry
 												.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();
-				verifyMultipleAttributeKeyTable(mc);
 				Builder <?> attributeBuilder = AttributeBaseBuilder
 												.on().generateClassAttributes(mc , 
 														builder,enableValidation);
