@@ -29,6 +29,5 @@ implements AnnotationDescriptionFactory<EmbeddedId, IdBase<?,?>> {
 				.map(a -> AnnotationDescription.Builder
 						.ofType(EmbeddedId.class)
 						.build());
-		
 	}
 }
