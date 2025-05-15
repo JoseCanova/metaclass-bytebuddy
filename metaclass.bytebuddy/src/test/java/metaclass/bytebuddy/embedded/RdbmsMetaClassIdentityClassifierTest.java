@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.nanotek.ClassConfigurationInitializer;
 import org.nanotek.RdbmsMetaClassIdentityClassifier;
+import org.nanotek.RdbmsMetaClassIdentityClassifier.KeyClassification;
+import org.nanotek.RdbmsMetaClassIdentityClassifier.MetaClassIdentityClassification;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,11 +22,12 @@ public class RdbmsMetaClassIdentityClassifierTest
 implements ClassConfigurationInitializer,RdbmsMetaClassIdentityClassifier{
 
 	private List<RdbmsMetaClass> metaClasses;
-	
+	private List<RdbmsMetaClass> metaClassesSimple;
 	@BeforeEach
 	void prepareDataForTest() {
 		try {
 			metaClasses = getMetaClasses("metaclass_multikey.json");
+			metaClassesSimple = getMetaClasses("metaclass_simple_identity.json");
 		}catch(Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -41,15 +44,24 @@ implements ClassConfigurationInitializer,RdbmsMetaClassIdentityClassifier{
 		.ifPresentOrElse(classifier ->
 			assertTrue(classifier.classification().equals(KeyClassification.COMPOSITE))
 		,() -> {throw new RuntimeException("");});
-		assertTrue(!metaClass.getIdentityClassification().isEmpty());
+		
+		assertNotNull(metaClassesSimple);
+		assertTrue(metaClassesSimple.size() == 1);
+		RdbmsMetaClass metaClassSimple = metaClassesSimple.get(0);
+
+		Optional<MetaClassIdentityClassification> optClassificationSimple = classifyIdentity(metaClassSimple);
+		optClassificationSimple
+		.ifPresentOrElse(classifier ->
+			assertTrue(classifier.classification().equals(KeyClassification.SIMPLE))
+		,() -> {throw new RuntimeException("Exception on test : " + KeyClassification.SIMPLE.name());});
+		
 	}
-	
 	
 	@Override
 	public List<RdbmsMetaClass> getMetaClasses(String uriEndpont) {
 		try (			InputStream is = RdbmsMetaClassIdentityClassifierTest.class
 				.getClassLoader()
-				.getResourceAsStream("metaclass_multikey.json");
+				.getResourceAsStream(uriEndpont);
 					){
 			List<RdbmsMetaClass> al = new ArrayList<>();
 			var objectMapper = new ObjectMapper ();

@@ -29,7 +29,7 @@ public class MetaClassAttributeTest {
         	assertTrue (list.size()==1);
         	Object theNode = list.get(0);
         	theClass = objectMapper.convertValue(theNode,RdbmsMetaClass.class);
-        	assertTrue(theClass.getTableName().equals("simple_table"));
+        	assertTrue(theClass.getTableName().equals("simple_table_identity"));
     }
 	
 	@Test
