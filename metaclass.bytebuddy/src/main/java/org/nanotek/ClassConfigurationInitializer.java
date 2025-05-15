@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import org.nanotek.RdbmsMetaClassIdentityClassifier.MetaClassIdentityClassification;
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.BuilderMetaClass;
@@ -146,33 +145,48 @@ public interface ClassConfigurationInitializer
 		AttributeBaseBuilder.on().processManyToManyRelations(joinMetaClass, buildermetaclassregistry2);
 	}
 
-	//TODO: here will be added the classification of the RdbmsMetaClassIdentity
 	default void prepareSimpleAttributes(RdbmsMetaClass mc, Map<String,Object> configurationParameters) {
-	
+				//TODO: debug to verify why this configuration parameter is not working.
 				Boolean enableValidation = Optional
 						.ofNullable (configurationParameters
 								.get(configurationParameters.get("enableValidation")))
 								.map(v -> Boolean.class.cast(v)).orElse(false);		
 		        
 				
-				Optional<MetaClassIdentityClassification> classificationOpt = RdbmsMetaClassIdentityClassifier.on().classifyIdentity(mc);
-				
-				classificationOpt.ifPresentOrElse(keyType -> {
-							          String type = keyType.classification().name();
-							          mc.setIdentityClassification(type);
-					}, () -> 
-							{
-								throw new RuntimeException();
-				});
 				
 				BuilderMetaClass bmc = builderMetaClassRegistry
 												.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();
-				Builder <?> attributeBuilder = AttributeBaseBuilder
-												.on().generateClassAttributes(mc , 
-														builder,enableValidation);
-				BuilderMetaClass abmc = new BuilderMetaClass(attributeBuilder,mc);
-				builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
+				
+				Optional<?> optClassification = verifyMetaClassIdentityClassification(mc);
+				
+				//TODO: modify this section of code to provide a mechanism for definition of the type of classification.
+				/**
+				 * first idea could be map the classification to its original value, the enumeration (includes a simple modification on model).
+				 * after that alter the method call (using overload maybe to avoid "excess code transformation. 
+				 * keeping it simple the runnable else fires an exception as implemented in the unit tests there, 
+				 * classes without primary key in this the initial version shall be exclude from the model definition.
+				 */
+				optClassification.ifPresentOrElse(classification ->{
+					Builder <?> attributeBuilder = AttributeBaseBuilder
+													.on().generateClassAttributes(mc , 
+																builder,enableValidation);
+													BuilderMetaClass abmc = new BuilderMetaClass(attributeBuilder,mc);
+													builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
+						}, 
+						() -> {
+							Builder <?> attributeBuilder = AttributeBaseBuilder
+																.on().generateClassAttributes(mc , 
+																			builder,enableValidation);
+							BuilderMetaClass abmc = new BuilderMetaClass(attributeBuilder,mc);
+							builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
+						});
+				
+	}
+
+	//TODO:implement this method to return a value in case of a composite key.
+	default Optional<?> verifyMetaClassIdentityClassification(RdbmsMetaClass mc){
+		return Optional.empty();
 	}
 
 	default void prepareForeignAttributes(RdbmsMetaClass mc) {

@@ -31,7 +31,7 @@ public interface AttributeBaseBuilder<T extends Builder<?> , M extends RdbmsMeta
 	
 	//TODO: Fix type check 
 	//TODO: verify method implementation for a functional method
-	default T generateClassAttributes(M metaClass , T builder, boolean enableValidation) {
+	default T generateClassAttributes(M metaClass , T builder, boolean enableValidation ) {
 		Holder<Builder<?>> holder = Holder.of(builder);
 		List<RdbmsMetaClassAttribute> atts = metaClass.getMetaAttributes();
 		atts
