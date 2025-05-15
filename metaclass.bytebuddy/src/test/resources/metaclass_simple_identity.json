@@ -80,6 +80,7 @@
     ],
     "hasPrimaryKey": true,
     "className": "simpleTableIdendity",
-    "tableName": "simple_table_identity"
+    "tableName": "simple_table_identity",
+	"identityClassification":"SIMPLE"
   }
 ]

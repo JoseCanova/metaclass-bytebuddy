@@ -100,6 +100,7 @@
     ],
     "hasPrimaryKey": true,
     "className": "simpleTable",
-    "tableName": "simple_table"
+    "tableName": "simple_table",
+	"identityClassification":"COMPOSITE"
   }
 ]

@@ -36,7 +36,7 @@ import net.bytebuddy.dynamic.DynamicType.Unloaded;
  * of the "rdbms table" which means they are not dependent of
  */
 public interface ClassConfigurationInitializer 
-extends RdbmsMetaClassIdentityClassifier{
+{
 	
 	public static final BuilderMetaClassRegistry builderMetaClassRegistry 
 													= new BuilderMetaClassRegistry();
