@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import org.nanotek.meta.model.classification.KeyClassification;
 import org.nanotek.meta.model.rdbms.RdbmsIndex;
 import org.nanotek.meta.model.rdbms.RdbmsMetaClass;
 import org.nanotek.metaclass.BuilderMetaClass;
@@ -158,16 +159,20 @@ public interface ClassConfigurationInitializer
 												.getBuilderMetaClass(mc.getTableName());
 				Builder <?> builder=bmc.builder();
 				
-				Optional<?> optClassification = verifyMetaClassIdentityClassification(mc);
+				Optional<String> optClassification = verifyMetaClassIdentityClassification(mc);
 				
-				//TODO: modify this section of code to provide a mechanism for definition of the type of classification.
+				//TODO: modify this section of code to provide a mechanism for definition of the type of the key classification.
+				//TODO: defined the classification of the key , provide manners to define embeddedids in case of composite ids.
 				/**
-				 * first idea could be map the classification to its original value, the enumeration (includes a simple modification on model).
-				 * after that alter the method call (using overload maybe to avoid "excess code transformation. 
+				 * first idea could be map the classification to its original value, the enumeration 
+				 * (includes a simple modification on model).
+				 * after that alter the method call using overload maybe to avoid "excess code transformation." 
 				 * keeping it simple the runnable else fires an exception as implemented in the unit tests there, 
 				 * classes without primary key in this the initial version shall be exclude from the model definition.
 				 */
-				optClassification.ifPresentOrElse(classification ->{
+				optClassification
+					.map(classification -> KeyClassification.valueOf(classification))
+					.ifPresentOrElse(classification ->{
 					Builder <?> attributeBuilder = AttributeBaseBuilder
 													.on().generateClassAttributes(mc , 
 																builder,enableValidation);
@@ -175,18 +180,16 @@ public interface ClassConfigurationInitializer
 													builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
 						}, 
 						() -> {
-							Builder <?> attributeBuilder = AttributeBaseBuilder
-																.on().generateClassAttributes(mc , 
-																			builder,enableValidation);
-							BuilderMetaClass abmc = new BuilderMetaClass(attributeBuilder,mc);
-							builderMetaClassRegistry.registryBuilderMetaClass(mc.getTableName(), abmc);
+							    throw new RuntimeException("No classification found on metaclass");
 						});
 				
 	}
 
+
+	record MetaClassClassification(RdbmsMetaClass mc , Builder <?> builder , Boolean enableValidation) {}
 	//TODO:implement this method to return a value in case of a composite key.
-	default Optional<?> verifyMetaClassIdentityClassification(RdbmsMetaClass mc){
-		return Optional.empty();
+	default Optional<String> verifyMetaClassIdentityClassification(RdbmsMetaClass mc){
+		return Optional.ofNullable(mc.getIdentityClassification());
 	}
 
 	default void prepareForeignAttributes(RdbmsMetaClass mc) {
